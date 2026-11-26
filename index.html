@@ -66,6 +66,14 @@
     .live-dot {
       animation: pulse-dot 2s infinite ease-in-out;
     }
+
+    @keyframes modal-pop {
+      0% { opacity: 0; transform: scale(0.95) translateY(8px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .modal-card {
+      animation: modal-pop 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
   </style>
 </head>
 <body class="text-slate-100 min-h-screen selection:bg-orange-500 selection:text-white pb-16">
@@ -79,8 +87,9 @@
         </div>
         <div>
           <div class="flex items-center gap-2.5 flex-wrap">
-            <h1 id="tripTitleDisplay" class="text-lg sm:text-2xl font-bold tracking-tight text-white cursor-pointer hover:text-orange-400 transition-colors" onclick="editTripTitle()" title="คลิกเพื่อเปลี่ยนชื่อทริป">
-              เช็ควันเที่ยวกับเพื่อน 2026
+            <h1 id="tripTitleDisplay" class="text-lg sm:text-2xl font-bold tracking-tight text-white cursor-pointer hover:text-orange-400 transition-colors flex items-center gap-2 group" onclick="openEditTitleModal()" title="คลิกเพื่อเปลี่ยนชื่อทริป">
+              <span id="tripTitleText">เช็ควันเที่ยวกับเพื่อน 2026</span>
+              <i data-lucide="pencil" class="w-4 h-4 text-slate-500 group-hover:text-orange-400 transition-colors"></i>
             </h1>
             <!-- Live Room Status Badge -->
             <span id="liveSyncBadge" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-semibold rounded-full bg-slate-800 text-slate-300 border border-slate-700">
@@ -96,7 +105,7 @@
 
       <!-- Action Buttons -->
       <div class="flex items-center gap-2 flex-wrap">
-        <button onclick="openAddFriendModal()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-sky-500 hover:bg-sky-600 text-white shadow-md shadow-sky-500/20 transition-all">
+        <button onclick="openAddFriendModal()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white shadow-md shadow-sky-500/20 transition-all">
           <i data-lucide="user-plus" class="w-4 h-4"></i>
           <span>+ เพิ่มชื่อตัวเอง / เพื่อน</span>
         </button>
@@ -126,7 +135,7 @@
               ดาวน์โหลดไฟล์ CSV
             </button>
             <hr class="border-slate-700 my-1">
-            <button onclick="clearAllFriendsInRoom()" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-rose-400 hover:bg-rose-500/10 text-left">
+            <button onclick="openConfirmClearAllModal()" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-rose-400 hover:bg-rose-500/10 text-left">
               <i data-lucide="trash-2" class="w-4 h-4"></i>
               ลบรายชื่อทั้งหมดในห้องนี้
             </button>
@@ -329,52 +338,237 @@
     </div>
   </div>
 
-  <!-- Quick Fill Friend Modal -->
-  <div id="friendModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-    <div class="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-700 shadow-2xl p-5 space-y-4">
-      <div class="flex items-center justify-between">
-        <h3 id="friendModalTitle" class="text-lg font-bold text-white">จัดการเวลาของเพื่อน</h3>
-        <button onclick="closeFriendModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800">
+  <!-- ========================================== -->
+  <!-- CUSTOM MODALS (Replacing ugly browser popups) -->
+  <!-- ========================================== -->
+
+  <!-- 1. Add Friend Modal -->
+  <div id="addFriendModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/80 backdrop-blur-md p-4" onclick="if(event.target===this)closeAddFriendModal()">
+    <div class="modal-card w-full max-w-md rounded-3xl bg-slate-900 border border-slate-700/80 shadow-2xl shadow-black/60 overflow-hidden">
+      <div class="px-6 pt-6 pb-4 bg-gradient-to-b from-sky-500/10 to-transparent border-b border-slate-800/80 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-sky-500/20 border border-sky-500/30 text-sky-400 flex items-center justify-center">
+            <i data-lucide="user-plus" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base sm:text-lg font-bold text-white">เพิ่มรายชื่อเข้าตาราง</h3>
+            <p class="text-xs text-slate-400">เพิ่มชื่อตัวเองหรือเพิ่มเพื่อนหลายๆ คนพร้อมกันได้เลย</p>
+          </div>
+        </div>
+        <button onclick="closeAddFriendModal()" class="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
-      <p class="text-xs text-slate-400">ตั้งค่าสถานะทั้งหมดในคลิกเดียว (ซิงก์ให้เพื่อนทุกคนเห็นทันที)</p>
-      
-      <div>
-        <label class="block text-xs font-medium text-slate-300 mb-1">ชื่อเพื่อน</label>
-        <input id="friendModalNameInput" type="text" class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-sm text-white focus:outline-none focus:border-orange-500" />
-      </div>
 
-      <div class="space-y-2">
-        <span class="block text-xs font-medium text-slate-300">เหมาตั้งค่าทุกวันเป็น:</span>
-        <div class="grid grid-cols-2 gap-2">
-          <button onclick="bulkSetFriendStatus('free')" class="px-3 py-2.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 text-xs font-semibold flex items-center justify-center gap-1.5">
-            ✅ ว่างทุกวัน
-          </button>
-          <button onclick="bulkSetFriendStatus('busy')" class="px-3 py-2.5 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 border border-rose-500/40 text-rose-300 text-xs font-semibold flex items-center justify-center gap-1.5">
-            ❌ ไม่ว่างทุกวัน
-          </button>
-          <button onclick="bulkSetFriendStatus('holiday_free')" class="px-3 py-2.5 rounded-xl bg-orange-500/20 hover:bg-orange-500/30 border border-orange-500/40 text-orange-300 text-xs font-semibold flex items-center justify-center gap-1.5">
-            🏖️ ว่างเฉพาะช่วงหยุดยาว
-          </button>
-          <button onclick="bulkSetFriendStatus('empty')" class="px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-300 text-xs font-semibold flex items-center justify-center gap-1.5">
-            ⬜ ล้างข้อมูลแถวนี้
-          </button>
+      <form onsubmit="submitAddFriendModal(event)" class="p-6 space-y-5">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-2">
+            ชื่อเล่น (คั่นด้วยเครื่องหมายจุลภาค <code class="text-sky-400">,</code> เพื่อเพิ่มหลายคนพร้อมกันได้)
+          </label>
+          <input id="addFriendNameInput" type="text" placeholder="เช่น ป็อบ หรือ บอย, อู๋, เซฟ" required
+            class="w-full px-4 py-3 rounded-2xl bg-slate-950 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all" />
+          <p id="addFriendError" class="hidden text-xs text-rose-400 mt-1.5 font-medium"></p>
         </div>
-      </div>
 
-      <div class="pt-3 border-t border-slate-800 flex items-center justify-between">
-        <button onclick="deleteCurrentFriend()" class="px-3 py-2 rounded-xl text-xs font-semibold text-rose-400 hover:bg-rose-500/10">
-          ลบรายชื่อนี้
-        </button>
-        <div class="flex items-center gap-2">
-          <button onclick="closeFriendModal()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-2">ตั้งค่าสถานะเริ่มต้นให้ชื่อที่เพิ่ม</label>
+          <div class="grid grid-cols-3 gap-2">
+            <button type="button" onclick="selectNewFriendPreset('empty')" id="presetBtn-empty"
+              class="px-3 py-2.5 rounded-xl border text-xs font-semibold flex flex-col items-center gap-1 transition-all">
+              <span>⬜ ยังไม่เลือก</span>
+              <span class="text-[10px] opacity-75">ค่อยจิ้มทีละวัน</span>
+            </button>
+            <button type="button" onclick="selectNewFriendPreset('free')" id="presetBtn-free"
+              class="px-3 py-2.5 rounded-xl border text-xs font-semibold flex flex-col items-center gap-1 transition-all">
+              <span>✅ ว่างทุกวัน</span>
+              <span class="text-[10px] opacity-75">ค่อยกดลบวันติดธุระ</span>
+            </button>
+            <button type="button" onclick="selectNewFriendPreset('holiday_free')" id="presetBtn-holiday_free"
+              class="px-3 py-2.5 rounded-xl border text-xs font-semibold flex flex-col items-center gap-1 transition-all">
+              <span>🏖️ เฉพาะหยุดยาว</span>
+              <span class="text-[10px] opacity-75">ว่างช่วงหยุด 3 วัน</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="pt-2 flex items-center justify-end gap-2.5">
+          <button type="button" onclick="closeAddFriendModal()" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors">
             ยกเลิก
           </button>
-          <button onclick="saveFriendModalName()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-orange-500 text-white hover:bg-orange-600">
-            บันทึกชื่อ
+          <button type="submit" class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white shadow-lg shadow-sky-500/25 transition-all flex items-center gap-1.5">
+            <i data-lucide="check" class="w-4 h-4"></i>
+            <span>เพิ่มเข้าตาราง</span>
           </button>
         </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. Add Date Modal -->
+  <div id="addDateModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/80 backdrop-blur-md p-4" onclick="if(event.target===this)closeAddDateModal()">
+    <div class="modal-card w-full max-w-md rounded-3xl bg-slate-900 border border-slate-700/80 shadow-2xl shadow-black/60 overflow-hidden">
+      <div class="px-6 pt-6 pb-4 bg-gradient-to-b from-orange-500/10 to-transparent border-b border-slate-800/80 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-orange-500/20 border border-orange-500/30 text-orange-400 flex items-center justify-center">
+            <i data-lucide="calendar-plus" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base sm:text-lg font-bold text-white">เพิ่มตัวเลือกวันเที่ยว</h3>
+            <p class="text-xs text-slate-400">เลือกวันที่ต้องการเพิ่มเข้าตารางเช็ควันว่าง</p>
+          </div>
+        </div>
+        <button onclick="closeAddDateModal()" class="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form onsubmit="submitAddDateModal(event)" class="p-6 space-y-5">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-2">เลือกวันที่จากปฏิทิน</label>
+          <input id="addDatePickerInput" type="date" value="2026-12-28" required
+            class="w-full px-4 py-3 rounded-2xl bg-slate-950 border border-slate-700 text-sm text-white focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all" />
+          <p id="addDateError" class="hidden text-xs text-rose-400 mt-1.5 font-medium"></p>
+        </div>
+
+        <label class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-950/90 border border-slate-800 cursor-pointer hover:border-orange-500/40 transition-colors">
+          <div class="flex items-center gap-3">
+            <span class="w-4 h-4 rounded bg-[#ff9900] inline-block shadow-sm"></span>
+            <div>
+              <div class="text-xs sm:text-sm font-semibold text-slate-200">ไฮไลท์สีส้ม (วันหยุดพิเศษ / นักขัตฤกษ์)</div>
+              <div class="text-[11px] text-slate-400">แสดงแถบสีส้มเหมือนวันหยุดใน Google Sheet</div>
+            </div>
+          </div>
+          <input id="addDateHolidayCheck" type="checkbox" class="w-4 h-4 accent-orange-500 rounded cursor-pointer" />
+        </label>
+
+        <div class="pt-2 flex items-center justify-end gap-2.5">
+          <button type="button" onclick="closeAddDateModal()" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors">
+            ยกเลิก
+          </button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-lg shadow-orange-500/25 transition-all flex items-center gap-1.5">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            <span>เพิ่มวันที่</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. Edit Trip Title Modal -->
+  <div id="editTitleModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/80 backdrop-blur-md p-4" onclick="if(event.target===this)closeEditTitleModal()">
+    <div class="modal-card w-full max-w-md rounded-3xl bg-slate-900 border border-slate-700/80 shadow-2xl shadow-black/60 overflow-hidden">
+      <div class="px-6 pt-6 pb-4 bg-gradient-to-b from-amber-500/10 to-transparent border-b border-slate-800/80 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-amber-500/20 border border-amber-500/30 text-amber-400 flex items-center justify-center">
+            <i data-lucide="compass" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base sm:text-lg font-bold text-white">เปลี่ยนชื่อทริป</h3>
+            <p class="text-xs text-slate-400">ตั้งชื่อทริปให้เพื่อนๆ รู้ว่าจะไปเที่ยวไหนกัน</p>
+          </div>
+        </div>
+        <button onclick="closeEditTitleModal()" class="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form onsubmit="submitEditTitleModal(event)" class="p-6 space-y-5">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-2">ชื่อทริป / หัวข้อตาราง</label>
+          <input id="editTitleInput" type="text" placeholder="เช่น ทริปเขาใหญ่ส่งท้ายปี 2026" required
+            class="w-full px-4 py-3 rounded-2xl bg-slate-950 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all" />
+        </div>
+
+        <div class="pt-2 flex items-center justify-end gap-2.5">
+          <button type="button" onclick="closeEditTitleModal()" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors">
+            ยกเลิก
+          </button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-lg shadow-orange-500/25 transition-all">
+            บันทึกชื่อทริป
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. Manage Existing Friend Row Modal -->
+  <div id="friendModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/80 backdrop-blur-md p-4" onclick="if(event.target===this)closeFriendModal()">
+    <div class="modal-card w-full max-w-md rounded-3xl bg-slate-900 border border-slate-700/80 shadow-2xl shadow-black/60 overflow-hidden">
+      <div class="px-6 pt-6 pb-4 bg-gradient-to-b from-emerald-500/10 to-transparent border-b border-slate-800/80 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 flex items-center justify-center">
+            <i data-lucide="user-check" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 id="friendModalTitle" class="text-base sm:text-lg font-bold text-white">จัดการเวลาของเพื่อน</h3>
+            <p class="text-xs text-slate-400">เหมาตั้งค่าทั้งแถวในคลิกเดียว (ซิงก์ให้ทุกคนเห็นทันที)</p>
+          </div>
+        </div>
+        <button onclick="closeFriendModal()" class="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-5">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-2">แก้ไขชื่อเพื่อน</label>
+          <input id="friendModalNameInput" type="text"
+            class="w-full px-4 py-2.5 rounded-2xl bg-slate-950 border border-slate-700 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all" />
+        </div>
+
+        <div class="space-y-2.5">
+          <span class="block text-xs font-semibold text-slate-300">เหมาตั้งค่าทุกวันในแถวนี้เป็น:</span>
+          <div class="grid grid-cols-2 gap-2.5">
+            <button onclick="bulkSetFriendStatus('free')" class="px-3 py-3 rounded-2xl bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 text-xs font-bold flex items-center justify-center gap-1.5 transition-all">
+              ✅ ว่างทุกวัน
+            </button>
+            <button onclick="bulkSetFriendStatus('busy')" class="px-3 py-3 rounded-2xl bg-rose-600/20 hover:bg-rose-600/30 border border-rose-500/40 text-rose-300 text-xs font-bold flex items-center justify-center gap-1.5 transition-all">
+              ❌ ไม่ว่างทุกวัน
+            </button>
+            <button onclick="bulkSetFriendStatus('holiday_free')" class="px-3 py-3 rounded-2xl bg-orange-500/20 hover:bg-orange-500/30 border border-orange-500/40 text-orange-300 text-xs font-bold flex items-center justify-center gap-1.5 transition-all">
+              🏖️ ว่างเฉพาะช่วงหยุดยาว
+            </button>
+            <button onclick="bulkSetFriendStatus('empty')" class="px-3 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-300 text-xs font-bold flex items-center justify-center gap-1.5 transition-all">
+              ⬜ ล้างข้อมูลแถวนี้
+            </button>
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-slate-800 flex items-center justify-between">
+          <button onclick="deleteCurrentFriend()" class="px-3.5 py-2 rounded-xl text-xs font-semibold text-rose-400 hover:bg-rose-500/15 transition-colors flex items-center gap-1.5">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            <span>ลบรายชื่อนี้</span>
+          </button>
+          <div class="flex items-center gap-2">
+            <button onclick="closeFriendModal()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">
+              ปิด
+            </button>
+            <button onclick="saveFriendModalName()" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950 hover:bg-emerald-400">
+              บันทึกชื่อ
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Confirm Clear All Friends Modal -->
+  <div id="confirmClearModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/80 backdrop-blur-md p-4" onclick="if(event.target===this)closeConfirmClearAllModal()">
+    <div class="modal-card w-full max-w-sm rounded-3xl bg-slate-900 border border-rose-500/30 shadow-2xl shadow-black/60 p-6 space-y-4 text-center">
+      <div class="w-12 h-12 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-400 flex items-center justify-center mx-auto">
+        <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+      </div>
+      <div>
+        <h3 class="text-base font-bold text-white">ลบรายชื่อทั้งหมดในห้องนี้?</h3>
+        <p class="text-xs text-slate-400 mt-1">ข้อมูลรายชื่อเพื่อนและวันว่างในห้องนี้จะถูกล้างเป็นตารางว่างเปล่าทั้งหมด</p>
+      </div>
+      <div class="flex items-center justify-center gap-2.5 pt-2">
+        <button onclick="closeConfirmClearAllModal()" class="flex-1 py-2.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">
+          ยกเลิก
+        </button>
+        <button onclick="confirmClearAllFriends()" class="flex-1 py-2.5 rounded-xl text-xs font-bold bg-rose-600 text-white hover:bg-rose-500 shadow-lg shadow-rose-600/25">
+          ยืนยันลบทั้งหมด
+        </button>
       </div>
     </div>
   </div>
@@ -410,7 +604,6 @@
       { id: '27/12/2026', label: '27/12/2026', dow: 'Sun', isHoliday: false }
     ];
 
-    // Pre-populated data for the dedicated shared room (?room=gang2026)
     const GANG_FRIENDS = [
       'ป็อบ', 'บอย', 'อู๋', 'เซฟ', 'ตัง', 'ตัน', 'ไบ้/โฉ', 'อ้น', 'เบส', 'โฟล์ค', 'ฟร้อง'
     ];
@@ -425,7 +618,6 @@
       '20/12/2026': 'free', '26/12/2026': 'free', '27/12/2026': 'free'
     };
 
-    // Main root URL default: 0 friends (completely blank roster!)
     function buildBlankState() {
       return {
         title: 'เช็ควันเที่ยวกับเพื่อน 2026',
@@ -438,7 +630,6 @@
       };
     }
 
-    // Separate shared URL state (?room=gang2026): preloaded with the 11 friends from the sheet
     function buildGangPresetState() {
       const availability = {};
       GANG_FRIENDS.forEach((name) => {
@@ -471,6 +662,7 @@
     let isMouseDown = false;
     let dragPaintValue = null;
     let activeFriendIndex = null;
+    let newFriendPreset = 'empty';
     let publishTimer = null;
     let eventSource = null;
 
@@ -723,7 +915,7 @@
     // 4. RENDER UI
     // ==========================================
     function renderAll() {
-      document.getElementById('tripTitleDisplay').textContent = state.title || 'เช็ควันเที่ยวกับเพื่อน 2026';
+      document.getElementById('tripTitleText').textContent = state.title || 'เช็ควันเที่ยวกับเพื่อน 2026';
       document.getElementById('meetupPlaceInput').value = state.meetupPlace || '';
       document.getElementById('meetupTimeInput').value = state.meetupTime || '';
 
@@ -875,7 +1067,7 @@
                   <h4 class="text-base font-bold text-white">ตารางนี้ยังไม่มีรายชื่อเพื่อน</h4>
                   <p class="text-xs text-slate-400 mt-1">กดปุ่มด้านล่างเพื่อเพิ่มชื่อคนแรก แล้วส่งลิงก์ให้เพื่อนเข้ามาเพิ่มชื่อตัวเองและจิ้มวันว่างพร้อมกันแบบ Real-time ได้เลย!</p>
                 </div>
-                <button onclick="openAddFriendModal()" class="mt-1 px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs sm:text-sm shadow-lg shadow-sky-500/25 transition-all">
+                <button onclick="openAddFriendModal()" class="mt-1 px-4 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-sky-500/25 transition-all">
                   + เพิ่มชื่อคนแรกเข้าตาราง
                 </button>
               </div>
@@ -1094,7 +1286,7 @@
     }
 
     // ==========================================
-    // 5. INTERACTIONS & EVENTS
+    // 5. INTERACTIONS & CUSTOM MODALS
     // ==========================================
     function getNextStatus(current) {
       const order = ['empty', 'free', 'busy', 'maybe'];
@@ -1148,22 +1340,173 @@
       showToast(`${target.id}: ${target.isHoliday ? 'ตั้งเป็นวันหยุดพิเศษ (สีส้ม)' : 'ตั้งเป็นวันปกติ'}`);
     }
 
-    function editTripTitle() {
-      const next = prompt('ตั้งชื่อทริปของคุณ:', state.title);
-      if (next && next.trim()) {
-        state.title = next.trim();
-        renderAll();
-        scheduleBroadcast();
-      }
-    }
-
     function saveMeetupInfo() {
       state.meetupPlace = document.getElementById('meetupPlaceInput').value;
       state.meetupTime = document.getElementById('meetupTimeInput').value;
       scheduleBroadcast();
     }
 
-    // Friend Modal
+    // --- Modal 1: Add Friend ---
+    function selectNewFriendPreset(preset) {
+      newFriendPreset = preset;
+      const presets = ['empty', 'free', 'holiday_free'];
+      presets.forEach(p => {
+        const btn = document.getElementById(`presetBtn-${p}`);
+        if (!btn) return;
+        if (p === preset) {
+          btn.className = 'px-3 py-2.5 rounded-xl border text-xs font-bold flex flex-col items-center gap-1 transition-all bg-sky-500/20 border-sky-400 text-sky-200 shadow-sm';
+        } else {
+          btn.className = 'px-3 py-2.5 rounded-xl border text-xs font-semibold flex flex-col items-center gap-1 transition-all bg-slate-950/60 border-slate-800 text-slate-400 hover:bg-slate-800/80 hover:text-slate-200';
+        }
+      });
+    }
+
+    function openAddFriendModal() {
+      const modal = document.getElementById('addFriendModal');
+      const input = document.getElementById('addFriendNameInput');
+      const err = document.getElementById('addFriendError');
+      err.classList.add('hidden');
+      input.value = '';
+      selectNewFriendPreset('empty');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      if (window.lucide) lucide.createIcons();
+      setTimeout(() => input.focus(), 50);
+    }
+
+    function closeAddFriendModal() {
+      const modal = document.getElementById('addFriendModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function submitAddFriendModal(e) {
+      e.preventDefault();
+      const input = document.getElementById('addFriendNameInput');
+      const err = document.getElementById('addFriendError');
+      const raw = input.value.trim();
+      if (!raw) return;
+
+      const names = raw.split(',').map(s => s.trim()).filter(Boolean);
+      const added = [];
+      const duplicates = [];
+      const longWeekendIds = ['23/10/2026', '24/10/2026', '25/10/2026', '05/12/2026', '06/12/2026', '07/12/2026'];
+
+      names.forEach(clean => {
+        if (state.friends.includes(clean)) {
+          duplicates.push(clean);
+        } else {
+          state.friends.push(clean);
+          state.availability[clean] = {};
+          state.dates.forEach(d => {
+            if (newFriendPreset === 'free') {
+              state.availability[clean][d.id] = 'free';
+            } else if (newFriendPreset === 'holiday_free') {
+              state.availability[clean][d.id] = (d.isHoliday || longWeekendIds.includes(d.id)) ? 'free' : 'empty';
+            } else {
+              state.availability[clean][d.id] = 'empty';
+            }
+          });
+          added.push(clean);
+        }
+      });
+
+      if (added.length === 0 && duplicates.length > 0) {
+        err.textContent = `มีชื่อ "${duplicates.join(', ')}" ในตารางอยู่แล้วครับ`;
+        err.classList.remove('hidden');
+        return;
+      }
+
+      closeAddFriendModal();
+      renderAll();
+      scheduleBroadcast();
+      showToast(`เพิ่ม "${added.join(', ')}" เข้าตารางแล้ว!`);
+    }
+
+    // --- Modal 2: Add Date ---
+    function openAddDateModal() {
+      const modal = document.getElementById('addDateModal');
+      const err = document.getElementById('addDateError');
+      err.classList.add('hidden');
+      document.getElementById('addDateHolidayCheck').checked = false;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function closeAddDateModal() {
+      const modal = document.getElementById('addDateModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function submitAddDateModal(e) {
+      e.preventDefault();
+      const picker = document.getElementById('addDatePickerInput');
+      const isHoliday = document.getElementById('addDateHolidayCheck').checked;
+      const err = document.getElementById('addDateError');
+      const val = picker.value; // YYYY-MM-DD
+      if (!val) return;
+
+      const [yyyy, mm, dd] = val.split('-');
+      const clean = `${dd}/${mm}/${yyyy}`;
+      if (state.dates.some(d => d.id === clean)) {
+        err.textContent = `มีวันที่ ${clean} ในตารางอยู่แล้วครับ`;
+        err.classList.remove('hidden');
+        return;
+      }
+
+      const dt = new Date(parseInt(yyyy, 10), parseInt(mm, 10) - 1, parseInt(dd, 10));
+      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const dow = !isNaN(dt.getTime()) ? days[dt.getDay()] : 'Sat';
+
+      state.dates.push({
+        id: clean,
+        label: clean,
+        dow,
+        isHoliday
+      });
+      state.friends.forEach(f => {
+        if (!state.availability[f]) state.availability[f] = {};
+        state.availability[f][clean] = 'empty';
+      });
+
+      closeAddDateModal();
+      renderAll();
+      scheduleBroadcast();
+      showToast(`เพิ่มวันที่ ${clean} (${dow}) เรียบร้อย!`);
+    }
+
+    // --- Modal 3: Edit Title ---
+    function openEditTitleModal() {
+      const modal = document.getElementById('editTitleModal');
+      const input = document.getElementById('editTitleInput');
+      input.value = state.title || 'เช็ควันเที่ยวกับเพื่อน 2026';
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      if (window.lucide) lucide.createIcons();
+      setTimeout(() => input.focus(), 50);
+    }
+
+    function closeEditTitleModal() {
+      const modal = document.getElementById('editTitleModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function submitEditTitleModal(e) {
+      e.preventDefault();
+      const next = document.getElementById('editTitleInput').value.trim();
+      if (next) {
+        state.title = next;
+        renderAll();
+        scheduleBroadcast();
+        showToast('เปลี่ยนชื่อทริปเรียบร้อย!');
+      }
+      closeEditTitleModal();
+    }
+
+    // --- Modal 4: Manage Friend Row ---
     function openFriendModal(friendIdx) {
       activeFriendIndex = friendIdx;
       const friendName = state.friends[friendIdx];
@@ -1172,6 +1515,7 @@
       const modal = document.getElementById('friendModal');
       modal.classList.remove('hidden');
       modal.classList.add('flex');
+      if (window.lucide) lucide.createIcons();
     }
 
     function closeFriendModal() {
@@ -1210,7 +1554,7 @@
 
       if (newName !== oldName) {
         if (state.friends.includes(newName)) {
-          alert('มีชื่อเพื่อนคนนี้ในตารางแล้ว');
+          showToast('มีชื่อเพื่อนคนนี้ในตารางอยู่แล้ว');
           return;
         }
         state.friends[activeFriendIndex] = newName;
@@ -1227,67 +1571,48 @@
     function deleteCurrentFriend() {
       if (activeFriendIndex === null) return;
       const name = state.friends[activeFriendIndex];
-      if (!confirm(`ต้องการลบ "${name}" ออกจากตารางใช่หรือไม่?`)) return;
       state.friends.splice(activeFriendIndex, 1);
       delete state.availability[name];
       renderAll();
       scheduleBroadcast();
       closeFriendModal();
-      showToast(`ลบ "${name}" แล้ว`);
+      showToast(`ลบ "${name}" ออกจากตารางแล้ว`);
     }
 
-    function openAddFriendModal() {
-      const name = prompt('ใส่ชื่อของคุณหรือชื่อเพื่อนที่ต้องการเพิ่ม:');
-      if (!name || !name.trim()) return;
-      const clean = name.trim();
-      if (state.friends.includes(clean)) {
-        alert('มีชื่อนี้ในตารางอยู่แล้วครับ');
-        return;
-      }
-      state.friends.push(clean);
-      state.availability[clean] = {};
-      state.dates.forEach(d => {
-        state.availability[clean][d.id] = 'empty';
-      });
+    // --- Modal 5: Confirm Clear All ---
+    function openConfirmClearAllModal() {
+      toggleMoreMenu(false);
+      const modal = document.getElementById('confirmClearModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function closeConfirmClearAllModal() {
+      const modal = document.getElementById('confirmClearModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function confirmClearAllFriends() {
+      state.friends = [];
+      state.availability = {};
+      closeConfirmClearAllModal();
       renderAll();
       scheduleBroadcast();
-      showToast(`เพิ่ม "${clean}" เข้าตารางแล้ว!`);
+      showToast('ล้างรายชื่อทั้งหมดในห้องนี้แล้ว');
     }
 
-    function openAddDateModal() {
-      const dateStr = prompt('ใส่วันที่ต้องการเพิ่ม (รูปแบบ DD/MM/YYYY เช่น 28/12/2026):');
-      if (!dateStr || !dateStr.trim()) return;
-      const clean = dateStr.trim();
-      if (state.dates.some(d => d.id === clean)) {
-        alert('มีวันที่นี้ในตารางอยู่แล้วครับ');
-        return;
+    // Escape key closes any open modal
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeAddFriendModal();
+        closeAddDateModal();
+        closeEditTitleModal();
+        closeFriendModal();
+        closeConfirmClearAllModal();
       }
-
-      let dow = 'Sat';
-      const parts = clean.split('/');
-      if (parts.length === 3) {
-        const dt = new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
-        if (!isNaN(dt.getTime())) {
-          const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-          dow = days[dt.getDay()];
-        }
-      }
-
-      const isHoliday = confirm('ต้องการไฮไลท์สีส้ม (วันหยุดพิเศษ) สำหรับวันนี้ด้วยไหม?');
-      state.dates.push({
-        id: clean,
-        label: clean,
-        dow,
-        isHoliday
-      });
-      state.friends.forEach(f => {
-        if (!state.availability[f]) state.availability[f] = {};
-        state.availability[f][clean] = 'empty';
-      });
-      renderAll();
-      scheduleBroadcast();
-      showToast(`เพิ่มวันที่ ${clean} (${dow}) แล้ว`);
-    }
+    });
 
     // ==========================================
     // 6. SHARE / NEW ROOM / EXPORT
@@ -1298,23 +1623,11 @@
       const url = window.location.href;
       navigator.clipboard.writeText(url).then(() => {
         showToast('คัดลอกลิงก์ห้อง Real-time แล้ว! ส่งให้เพื่อนเปิดกรอกพร้อมกันได้เลย 🔗');
-      }).catch(() => {
-        prompt('คัดลอกลิงก์ห้อง Real-time ด้านล่างนี้ส่งให้เพื่อนได้เลย:', url);
       });
     }
 
     function createNewBlankRoom() {
       window.location.href = window.location.pathname;
-    }
-
-    function clearAllFriendsInRoom() {
-      if (!confirm('ต้องการลบรายชื่อทั้งหมดในห้องนี้ให้เป็นตารางว่างใช่หรือไม่?')) return;
-      state.friends = [];
-      state.availability = {};
-      renderAll();
-      scheduleBroadcast();
-      toggleMoreMenu(false);
-      showToast('ล้างรายชื่อทั้งหมดแล้ว');
     }
 
     function copyLineSummary() {
@@ -1416,7 +1729,6 @@
       const roomParam = params.get('room');
 
       if (!roomParam) {
-        // Root URL (/): Always start completely blank with 0 friends!
         currentRoomId = null;
         state = buildBlankState();
         updateRoomStatusUI(false);
@@ -1427,7 +1739,6 @@
       currentRoomId = roomParam.trim();
       updateRoomStatusUI(false);
 
-      // Load room seed or local cache while fetching cloud room state
       const lsKey = getLocalStorageKey(currentRoomId);
       const cached = lsKey ? localStorage.getItem(lsKey) : null;
       if (cached) {
@@ -1438,7 +1749,6 @@
           }
         } catch (_) {}
       } else if (currentRoomId === 'gang2026') {
-        // Dedicated shared URL for the existing 11 friends from the sheet
         state = buildGangPresetState();
       } else {
         state = buildBlankState();
@@ -1446,14 +1756,11 @@
 
       renderAll();
 
-      // Pull latest state from the real-time room channel
       const foundInCloud = await fetchLatestRoomState(currentRoomId);
       if (!foundInCloud && currentRoomId === 'gang2026') {
-        // Seed the cloud channel once so anyone opening ?room=gang2026 sees the latest state
         scheduleBroadcast();
       }
 
-      // Connect SSE stream for instant updates whenever any friend edits
       connectRealtimeStream(currentRoomId);
     }
 
