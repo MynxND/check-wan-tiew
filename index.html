@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="th" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>เช็ควันเที่ยวกับเพื่อน | Trip Date Planner (Real-time)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"IBM Plex Sans Thai"', '"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"Plus Jakarta Sans"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'IBM Plex Sans Thai', 'Plus Jakarta Sans', sans-serif;
+      background-color: #0b0f19;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(249, 115, 22, 0.12) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.10) 0px, transparent 50%),
+        radial-gradient(at 50% 100%, rgba(99, 102, 241, 0.08) 0px, transparent 50%);
+      background-attachment: fixed;
+    }
+
+    ::-webkit-scrollbar {
+      height: 10px;
+      width: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.8);
+      border-radius: 8px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(71, 85, 105, 0.7);
+      border-radius: 8px;
+      border: 2px solid rgba(15, 23, 42, 0.8);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(100, 116, 139, 0.9);
+    }
+
+    .sticky-col {
+      position: sticky;
+      left: 0;
+      z-index: 20;
+    }
+    .sticky-col-shadow {
+      box-shadow: 6px 0 16px -4px rgba(0, 0, 0, 0.45);
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.25); }
+    }
+    .live-dot {
+      animation: pulse-dot 2s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="text-slate-100 min-h-screen selection:bg-orange-500 selection:text-white pb-16">
+
+  <!-- Top Navigation / Header -->
+  <header class="border-b border-slate-800/80 bg-slate-900/75 backdrop-blur-xl sticky top-0 z-40">
+    <div class="max-w-[1440px] mx-auto px-4 sm:px-6 py-3.5 flex flex-col md:flex-row md:items-center md:justify-between gap-3.5">
+      <div class="flex items-center gap-3.5">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shadow-lg shadow-orange-500/25 text-white shrink-0">
+          <i data-lucide="calendar-check-2" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2.5 flex-wrap">
+            <h1 id="tripTitleDisplay" class="text-lg sm:text-2xl font-bold tracking-tight text-white cursor-pointer hover:text-orange-400 transition-colors" onclick="editTripTitle()" title="คลิกเพื่อเปลี่ยนชื่อทริป">
+              เช็ควันเที่ยวกับเพื่อน 2026
+            </h1>
+            <!-- Live Room Status Badge -->
+            <span id="liveSyncBadge" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-semibold rounded-full bg-slate-800 text-slate-300 border border-slate-700">
+              <span id="liveDot" class="w-2 h-2 rounded-full bg-slate-400"></span>
+              <span id="liveSyncText">ห้องใหม่ (กด "สร้างลิงก์ห้อง" เพื่อแชร์แบบ Real-time)</span>
+            </span>
+          </div>
+          <p class="text-xs text-slate-400 mt-0.5">
+            ทุกคนที่เปิดลิงก์ห้องเดียวกัน เมื่อใครเพิ่มชื่อหรือจิ้มวันว่าง หน้าจอของเพื่อนทุกคนจะอัปเดตทันทีแบบ Real-time
+          </p>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center gap-2 flex-wrap">
+        <button onclick="openAddFriendModal()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-sky-500 hover:bg-sky-600 text-white shadow-md shadow-sky-500/20 transition-all">
+          <i data-lucide="user-plus" class="w-4 h-4"></i>
+          <span>+ เพิ่มชื่อตัวเอง / เพื่อน</span>
+        </button>
+        <button onclick="openAddDateModal()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all">
+          <i data-lucide="calendar-plus" class="w-4 h-4 text-orange-400"></i>
+          <span>+ เพิ่มวันที่</span>
+        </button>
+        <button onclick="shareRealtimeRoomLink()" id="shareRoomBtn" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-md shadow-orange-500/20 transition-all">
+          <i data-lucide="link" class="w-4 h-4"></i>
+          <span id="shareRoomBtnText">คัดลอกลิงก์ห้อง Real-time</span>
+        </button>
+        <button onclick="copyLineSummary()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 transition-all">
+          <i data-lucide="copy" class="w-4 h-4"></i>
+          <span>คัดลอกสรุปลงแชท</span>
+        </button>
+        <div class="relative group">
+          <button onclick="toggleMoreMenu()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-all" title="ตัวเลือกเพิ่มเติม">
+            <i data-lucide="more-vertical" class="w-4 h-4"></i>
+          </button>
+          <div id="moreMenu" class="hidden absolute right-0 mt-2 w-60 rounded-2xl bg-slate-800 border border-slate-700 shadow-2xl py-1.5 z-50 text-xs sm:text-sm">
+            <button onclick="createNewBlankRoom()" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-slate-200 hover:bg-slate-700/70 text-left">
+              <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-400"></i>
+              สร้างตารางใหม่เอี่ยม (ไม่มีรายชื่อ)
+            </button>
+            <button onclick="exportCSV()" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-slate-200 hover:bg-slate-700/70 text-left">
+              <i data-lucide="download" class="w-4 h-4 text-sky-400"></i>
+              ดาวน์โหลดไฟล์ CSV
+            </button>
+            <hr class="border-slate-700 my-1">
+            <button onclick="clearAllFriendsInRoom()" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-rose-400 hover:bg-rose-500/10 text-left">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+              ลบรายชื่อทั้งหมดในห้องนี้
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-[1440px] mx-auto px-4 sm:px-6 pt-5 space-y-5">
+
+    <!-- Top Summary Cards + Appointment Info -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+      
+      <!-- Stats Overview (7 cols) -->
+      <div class="lg:col-span-7 grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="p-4 rounded-2xl bg-slate-900/80 border border-slate-800/90 backdrop-blur flex flex-col justify-between">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-medium">
+            <span>แก๊งเพื่อนในตาราง</span>
+            <i data-lucide="users" class="w-4 h-4 text-sky-400"></i>
+          </div>
+          <div class="mt-2 flex items-baseline gap-1.5">
+            <span id="statTotalFriends" class="text-2xl sm:text-3xl font-extrabold text-white">0</span>
+            <span class="text-xs text-slate-400">คน</span>
+          </div>
+          <div id="statAnsweredFriends" class="mt-1 text-[11px] text-emerald-400 font-medium">
+            ลงเวลาแล้ว 0/0 คน
+          </div>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-slate-900/80 border border-slate-800/90 backdrop-blur flex flex-col justify-between">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-medium">
+            <span>ตัวเลือกวันเที่ยว</span>
+            <i data-lucide="calendar-days" class="w-4 h-4 text-orange-400"></i>
+          </div>
+          <div class="mt-2 flex items-baseline gap-1.5">
+            <span id="statTotalDates" class="text-2xl sm:text-3xl font-extrabold text-white">22</span>
+            <span class="text-xs text-slate-400">วัน</span>
+          </div>
+          <div id="statHolidayCount" class="mt-1 text-[11px] text-orange-400 font-medium">
+            มีวันหยุดพิเศษ 2 วัน
+          </div>
+        </div>
+
+        <div class="col-span-2 p-4 rounded-2xl bg-gradient-to-br from-emerald-950/60 via-slate-900/90 to-slate-900/90 border border-emerald-500/30 backdrop-blur flex flex-col justify-between">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+              <i data-lucide="trophy" class="w-4 h-4"></i>
+              วันที่คนว่างตรงกันมากที่สุด
+            </span>
+            <span id="statBestCountBadge" class="px-2 py-0.5 text-xs font-bold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+              ว่าง 0 คน
+            </span>
+          </div>
+          <div id="statBestDatesText" class="mt-2 text-base sm:text-lg font-bold text-white truncate">
+            ยังไม่มีรายชื่อเพื่อน
+          </div>
+          <div id="statReadyStatus" class="mt-1 text-xs text-slate-400 truncate">
+            กดปุ่ม "+ เพิ่มชื่อตัวเอง / เพื่อน" เพื่อเริ่มลงเวลาได้เลย
+          </div>
+        </div>
+      </div>
+
+      <!-- Appointment Info Card (5 cols) -->
+      <div class="lg:col-span-5 p-4 rounded-2xl bg-slate-900/80 border border-amber-500/25 backdrop-blur flex flex-col justify-between gap-2.5">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-orange-400"></span>
+            <h2 class="text-xs sm:text-sm font-bold text-amber-300">รายละเอียดการนัดหมาย</h2>
+          </div>
+          <span id="lastSyncedTime" class="text-[11px] text-emerald-400 font-medium">พร้อมใช้งาน</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <div>
+            <label class="block text-[11px] font-semibold text-amber-400/90 mb-1 flex items-center gap-1">
+              <i data-lucide="map-pin" class="w-3 h-3"></i> สถานที่นัดพบ / ทริป
+            </label>
+            <input id="meetupPlaceInput" type="text" placeholder="ระบุสถานที่นัดพบ..." 
+              class="w-full px-3 py-1.5 rounded-xl bg-slate-950/80 border border-slate-700/80 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-orange-500 transition-colors"
+              oninput="saveMeetupInfo()" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-semibold text-amber-400/90 mb-1 flex items-center gap-1">
+              <i data-lucide="clock" class="w-3 h-3"></i> เวลานัดพบ
+            </label>
+            <input id="meetupTimeInput" type="text" placeholder="เช่น 08:00 น. / ล้อหมุน..." 
+              class="w-full px-3 py-1.5 rounded-xl bg-slate-950/80 border border-slate-700/80 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-orange-500 transition-colors"
+              oninput="saveMeetupInfo()" />
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Quick Filter & Paint Mode Toolbar -->
+    <div class="p-3.5 sm:px-5 rounded-2xl bg-slate-900/85 border border-slate-800/90 backdrop-blur flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3.5">
+      
+      <!-- Left: Paint Brush / Click Mode -->
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="text-xs font-semibold text-slate-400 mr-1 flex items-center gap-1.5">
+          <i data-lucide="mouse-pointer-click" class="w-4 h-4 text-orange-400"></i>
+          โหมดจิ้มตาราง:
+        </span>
+        <button id="modeBtn-cycle" onclick="setPaintMode('cycle')" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border">
+          🔄 สลับสถานะทีละขั้น
+        </button>
+        <button id="modeBtn-free" onclick="setPaintMode('free')" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border">
+          ✅ ระบาย "ว่าง"
+        </button>
+        <button id="modeBtn-busy" onclick="setPaintMode('busy')" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border">
+          ❌ ระบาย "ไม่ว่าง"
+        </button>
+        <button id="modeBtn-maybe" onclick="setPaintMode('maybe')" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border">
+          🤔 ระบาย "อาจจะ"
+        </button>
+        <button id="modeBtn-empty" onclick="setPaintMode('empty')" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border">
+          ⬜ ยางลบ
+        </button>
+      </div>
+
+      <!-- Right: Month & Filter Tabs -->
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="text-xs font-semibold text-slate-400 mr-1">กรองช่วงเวลา:</span>
+        <button onclick="setMonthFilter('all')" id="filter-all" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all">ทั้งหมด (22)</button>
+        <button onclick="setMonthFilter('10')" id="filter-10" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all">ต.ค.</button>
+        <button onclick="setMonthFilter('11')" id="filter-11" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all">พ.ย.</button>
+        <button onclick="setMonthFilter('12')" id="filter-12" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all">ธ.ค.</button>
+        <button onclick="setMonthFilter('best')" id="filter-best" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-1">
+          <span>🔥 วันที่ว่างเยอะสุด</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Interactive Spreadsheet Grid -->
+    <div class="rounded-2xl bg-slate-900/90 border border-slate-800 shadow-2xl overflow-hidden">
+      <div class="overflow-x-auto" id="tableScrollContainer">
+        <table class="w-full border-collapse text-center select-none">
+          <thead id="gridHead"></thead>
+          <tbody id="gridBody"></tbody>
+          <tfoot id="gridFoot"></tfoot>
+        </table>
+      </div>
+
+      <!-- Legend Footer Bar -->
+      <div class="px-5 py-3.5 bg-slate-950/70 border-t border-slate-800/80 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs text-slate-400">
+        <div class="flex items-center gap-4 flex-wrap">
+          <span class="font-semibold text-slate-300">สัญลักษณ์ในตาราง:</span>
+          <span class="inline-flex items-center gap-1.5">
+            <span class="w-3.5 h-3.5 rounded bg-[#ff9900] inline-block shadow-sm"></span>
+            <span class="text-orange-300 font-medium">สีส้ม = วันหยุดพิเศษ</span>
+          </span>
+          <span class="inline-flex items-center gap-1.5">
+            <span class="w-3.5 h-3.5 rounded bg-[#11734b] border border-emerald-400/40 inline-block"></span>
+            <span class="text-emerald-300">ว่าง</span>
+          </span>
+          <span class="inline-flex items-center gap-1.5">
+            <span class="w-3.5 h-3.5 rounded bg-rose-700 border border-rose-400/40 inline-block"></span>
+            <span class="text-rose-300">ไม่ว่าง</span>
+          </span>
+          <span class="inline-flex items-center gap-1.5">
+            <span class="w-3.5 h-3.5 rounded bg-amber-600 border border-amber-400/40 inline-block"></span>
+            <span class="text-amber-300">อาจจะ / ไม่ชัวร์</span>
+          </span>
+          <span class="inline-flex items-center gap-1.5">
+            <span class="px-1.5 py-0.2 rounded bg-black text-white font-bold text-[10px] border border-slate-700">X</span>
+            <span>ยังว่างไม่ครบ</span>
+          </span>
+          <span class="inline-flex items-center gap-1.5">
+            <span class="px-1.5 py-0.2 rounded bg-emerald-500 text-slate-950 font-extrabold text-[10px]">✓ ครบแก๊ง!</span>
+            <span class="text-emerald-400 font-medium">ว่างตรงกันทุกคน</span>
+          </span>
+        </div>
+        <div class="text-[11px] text-emerald-400/90 font-medium">
+          ⚡ Real-time Sync: ทุกคนที่เปิดลิงก์ห้องเดียวกันจะเห็นการแก้ไขของเพื่อนเด้งขึ้นมาทันที
+        </div>
+      </div>
+    </div>
+
+    <!-- Weekend / Trip Pair Recommendations -->
+    <section class="p-5 rounded-2xl bg-slate-900/80 border border-slate-800/90 backdrop-blur">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
+        <div>
+          <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <i data-lucide="sparkles" class="w-5 h-5 text-amber-400"></i>
+            จัดอันดับช่วงวันหยุดสุดสัปดาห์น่าไป (Weekend Ranking)
+          </h3>
+          <p class="text-xs text-slate-400">คำนวณสดจากจำนวนเพื่อนที่กด "ว่าง" และไม่มีคนติดธุระในแต่ละช่วงเสาร์-อาทิตย์</p>
+        </div>
+      </div>
+      <div id="weekendRankingCards" class="grid grid-cols-1 md:grid-cols-3 gap-3.5"></div>
+    </section>
+
+  </main>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="px-4 py-3 rounded-2xl bg-slate-800 border border-slate-700 shadow-2xl flex items-center gap-3 text-sm text-white">
+      <span id="toastIcon" class="text-emerald-400">✅</span>
+      <span id="toastMessage">บันทึกและซิงก์ให้เพื่อนทุกคนแล้ว</span>
+    </div>
+  </div>
+
+  <!-- Quick Fill Friend Modal -->
+  <div id="friendModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+    <div class="w-full max-w-md rounded-2xl bg-slate-900 border border-slate-700 shadow-2xl p-5 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 id="friendModalTitle" class="text-lg font-bold text-white">จัดการเวลาของเพื่อน</h3>
+        <button onclick="closeFriendModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <p class="text-xs text-slate-400">ตั้งค่าสถานะทั้งหมดในคลิกเดียว (ซิงก์ให้เพื่อนทุกคนเห็นทันที)</p>
+      
+      <div>
+        <label class="block text-xs font-medium text-slate-300 mb-1">ชื่อเพื่อน</label>
+        <input id="friendModalNameInput" type="text" class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-sm text-white focus:outline-none focus:border-orange-500" />
+      </div>
+
+      <div class="space-y-2">
+        <span class="block text-xs font-medium text-slate-300">เหมาตั้งค่าทุกวันเป็น:</span>
+        <div class="grid grid-cols-2 gap-2">
+          <button onclick="bulkSetFriendStatus('free')" class="px-3 py-2.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 text-xs font-semibold flex items-center justify-center gap-1.5">
+            ✅ ว่างทุกวัน
+          </button>
+          <button onclick="bulkSetFriendStatus('busy')" class="px-3 py-2.5 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 border border-rose-500/40 text-rose-300 text-xs font-semibold flex items-center justify-center gap-1.5">
+            ❌ ไม่ว่างทุกวัน
+          </button>
+          <button onclick="bulkSetFriendStatus('holiday_free')" class="px-3 py-2.5 rounded-xl bg-orange-500/20 hover:bg-orange-500/30 border border-orange-500/40 text-orange-300 text-xs font-semibold flex items-center justify-center gap-1.5">
+            🏖️ ว่างเฉพาะช่วงหยุดยาว
+          </button>
+          <button onclick="bulkSetFriendStatus('empty')" class="px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-300 text-xs font-semibold flex items-center justify-center gap-1.5">
+            ⬜ ล้างข้อมูลแถวนี้
+          </button>
+        </div>
+      </div>
+
+      <div class="pt-3 border-t border-slate-800 flex items-center justify-between">
+        <button onclick="deleteCurrentFriend()" class="px-3 py-2 rounded-xl text-xs font-semibold text-rose-400 hover:bg-rose-500/10">
+          ลบรายชื่อนี้
+        </button>
+        <div class="flex items-center gap-2">
+          <button onclick="closeFriendModal()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">
+            ยกเลิก
+          </button>
+          <button onclick="saveFriendModalName()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-orange-500 text-white hover:bg-orange-600">
+            บันทึกชื่อ
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==========================================
+    // 1. DEFAULT DATES & PRESET ROOMS
+    // ==========================================
+    const CLIENT_ID = 'c_' + Math.random().toString(36).slice(2, 10);
+
+    const DEFAULT_DATES = [
+      { id: '23/10/2026', label: '23/10/2026', dow: 'Fri', isHoliday: true },
+      { id: '24/10/2026', label: '24/10/2026', dow: 'Sat', isHoliday: false },
+      { id: '25/10/2026', label: '25/10/2026', dow: 'Sun', isHoliday: false },
+      { id: '31/10/2026', label: '31/10/2026', dow: 'Sat', isHoliday: false },
+      { id: '01/11/2026', label: '01/11/2026', dow: 'Sun', isHoliday: false },
+      { id: '07/11/2026', label: '07/11/2026', dow: 'Sat', isHoliday: false },
+      { id: '08/11/2026', label: '08/11/2026', dow: 'Sun', isHoliday: false },
+      { id: '14/11/2026', label: '14/11/2026', dow: 'Sat', isHoliday: false },
+      { id: '15/11/2026', label: '15/11/2026', dow: 'Sun', isHoliday: false },
+      { id: '21/11/2026', label: '21/11/2026', dow: 'Sat', isHoliday: false },
+      { id: '22/11/2026', label: '22/11/2026', dow: 'Sun', isHoliday: false },
+      { id: '28/11/2026', label: '28/11/2026', dow: 'Sat', isHoliday: false },
+      { id: '29/11/2026', label: '29/11/2026', dow: 'Sun', isHoliday: false },
+      { id: '05/12/2026', label: '05/12/2026', dow: 'Sat', isHoliday: false },
+      { id: '06/12/2026', label: '06/12/2026', dow: 'Sun', isHoliday: false },
+      { id: '07/12/2026', label: '07/12/2026', dow: 'Mon', isHoliday: true },
+      { id: '12/12/2026', label: '12/12/2026', dow: 'Sat', isHoliday: false },
+      { id: '13/12/2026', label: '13/12/2026', dow: 'Sun', isHoliday: false },
+      { id: '19/12/2026', label: '19/12/2026', dow: 'Sat', isHoliday: false },
+      { id: '20/12/2026', label: '20/12/2026', dow: 'Sun', isHoliday: false },
+      { id: '26/12/2026', label: '26/12/2026', dow: 'Sat', isHoliday: false },
+      { id: '27/12/2026', label: '27/12/2026', dow: 'Sun', isHoliday: false }
+    ];
+
+    // Pre-populated data for the dedicated shared room (?room=gang2026)
+    const GANG_FRIENDS = [
+      'ป็อบ', 'บอย', 'อู๋', 'เซฟ', 'ตัง', 'ตัน', 'ไบ้/โฉ', 'อ้น', 'เบส', 'โฟล์ค', 'ฟร้อง'
+    ];
+    const GANG_BAI_CHO = {
+      '23/10/2026': 'busy', '24/10/2026': 'busy', '25/10/2026': 'busy',
+      '31/10/2026': 'busy', '01/11/2026': 'busy', '07/11/2026': 'busy',
+      '08/11/2026': 'busy', '14/11/2026': 'busy', '15/11/2026': 'busy',
+      '21/11/2026': 'busy', '22/11/2026': 'busy',
+      '28/11/2026': 'free', '29/11/2026': 'free', '05/12/2026': 'free',
+      '06/12/2026': 'busy', '07/12/2026': 'busy',
+      '12/12/2026': 'free', '13/12/2026': 'free', '19/12/2026': 'free',
+      '20/12/2026': 'free', '26/12/2026': 'free', '27/12/2026': 'free'
+    };
+
+    // Main root URL default: 0 friends (completely blank roster!)
+    function buildBlankState() {
+      return {
+        title: 'เช็ควันเที่ยวกับเพื่อน 2026',
+        meetupPlace: '',
+        meetupTime: '',
+        dates: JSON.parse(JSON.stringify(DEFAULT_DATES)),
+        friends: [],
+        availability: {},
+        updatedAt: Date.now()
+      };
+    }
+
+    // Separate shared URL state (?room=gang2026): preloaded with the 11 friends from the sheet
+    function buildGangPresetState() {
+      const availability = {};
+      GANG_FRIENDS.forEach((name) => {
+        availability[name] = {};
+        DEFAULT_DATES.forEach((d) => {
+          if (name === 'ป็อบ') {
+            availability[name][d.id] = 'free';
+          } else if (name === 'ไบ้/โฉ') {
+            availability[name][d.id] = GANG_BAI_CHO[d.id] || 'empty';
+          } else {
+            availability[name][d.id] = 'empty';
+          }
+        });
+      });
+      return {
+        title: 'เช็ควันเที่ยวกับเพื่อน 2026',
+        meetupPlace: '',
+        meetupTime: '',
+        dates: JSON.parse(JSON.stringify(DEFAULT_DATES)),
+        friends: [...GANG_FRIENDS],
+        availability,
+        updatedAt: Date.now()
+      };
+    }
+
+    let currentRoomId = null;
+    let state = buildBlankState();
+    let paintMode = 'cycle';
+    let monthFilter = 'all';
+    let isMouseDown = false;
+    let dragPaintValue = null;
+    let activeFriendIndex = null;
+    let publishTimer = null;
+    let eventSource = null;
+
+    // ==========================================
+    // 2. REAL-TIME ROOM ENGINE (NTFY SSE + PUB)
+    // ==========================================
+    const STATUS_TO_CHAR = { empty: '0', free: '1', busy: '2', maybe: '3' };
+    const CHAR_TO_STATUS = { '0': 'empty', '1': 'free', '2': 'busy', '3': 'maybe' };
+
+    function getRoomTopicUrl(roomId) {
+      const safeId = String(roomId).replace(/[^a-zA-Z0-9_-]/g, '');
+      return `https://ntfy.sh/cwt2026_room_${safeId}`;
+    }
+
+    function getLocalStorageKey(roomId) {
+      return roomId ? `cwt2026_room_${roomId}` : null;
+    }
+
+    function ensureRoomIdCreated() {
+      if (!currentRoomId) {
+        currentRoomId = 'r' + Math.random().toString(36).slice(2, 9);
+        const newUrl = `${window.location.pathname}?room=${currentRoomId}`;
+        history.replaceState(null, '', newUrl);
+        updateRoomStatusUI(true);
+        connectRealtimeStream(currentRoomId);
+      }
+      return currentRoomId;
+    }
+
+    function updateRoomStatusUI(isConnected) {
+      const badge = document.getElementById('liveSyncBadge');
+      const dot = document.getElementById('liveDot');
+      const text = document.getElementById('liveSyncText');
+      const btnText = document.getElementById('shareRoomBtnText');
+
+      if (!currentRoomId) {
+        badge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-semibold rounded-full bg-slate-800 text-slate-300 border border-slate-700';
+        dot.className = 'w-2 h-2 rounded-full bg-slate-400';
+        text.textContent = 'ตารางว่างเริ่มต้น (กด +เพิ่มชื่อ หรือสร้างลิงก์แชร์ได้เลย)';
+        if (btnText) btnText.textContent = 'สร้างลิงก์แชร์ Real-time';
+      } else if (isConnected) {
+        badge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-semibold rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30';
+        dot.className = 'w-2 h-2 rounded-full bg-emerald-400 live-dot';
+        text.textContent = `ห้อง Real-time (#${currentRoomId}) • อัปเดตสดทุกคน`;
+        if (btnText) btnText.textContent = 'คัดลอกลิงก์ห้อง Real-time';
+      } else {
+        badge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-semibold rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30';
+        dot.className = 'w-2 h-2 rounded-full bg-amber-400 live-dot';
+        text.textContent = `กำลังเชื่อมต่อห้อง #${currentRoomId}...`;
+      }
+    }
+
+    function serializeStateCompact(st) {
+      return JSON.stringify({
+        cid: CLIENT_ID,
+        ts: st.updatedAt || Date.now(),
+        t: st.title,
+        mp: st.meetupPlace,
+        mt: st.meetupTime,
+        d: st.dates.map(d => [d.id, d.dow, d.isHoliday ? 1 : 0]),
+        f: st.friends,
+        a: st.friends.map(f => st.dates.map(d => STATUS_TO_CHAR[st.availability[f]?.[d.id] || 'empty']).join(''))
+      });
+    }
+
+    function applyCompactPayload(rawStr, allowSameClient = false) {
+      try {
+        const data = typeof rawStr === 'string' ? JSON.parse(rawStr) : rawStr;
+        if (!data || !data.d || !Array.isArray(data.f) || !Array.isArray(data.a)) return false;
+        if (!allowSameClient && data.cid === CLIENT_ID) return false;
+
+        const dates = data.d.map(([id, dow, hol]) => ({
+          id,
+          label: id,
+          dow,
+          isHoliday: Boolean(hol)
+        }));
+        const friends = data.f;
+        const availability = {};
+        friends.forEach((f, fIdx) => {
+          availability[f] = {};
+          const rowStr = data.a[fIdx] || '';
+          dates.forEach((d, dIdx) => {
+            availability[f][d.id] = CHAR_TO_STATUS[rowStr[dIdx]] || 'empty';
+          });
+        });
+
+        state = {
+          title: data.t || state.title,
+          meetupPlace: data.mp ?? state.meetupPlace,
+          meetupTime: data.mt ?? state.meetupTime,
+          dates,
+          friends,
+          availability,
+          updatedAt: data.ts || Date.now()
+        };
+
+        const lsKey = getLocalStorageKey(currentRoomId);
+        if (lsKey) localStorage.setItem(lsKey, JSON.stringify(state));
+
+        renderAll();
+        updateTimestampBadge('อัปเดตสดจากเพื่อนเมื่อสักครู่ ⚡');
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function scheduleBroadcast() {
+      ensureRoomIdCreated();
+      state.updatedAt = Date.now();
+      const lsKey = getLocalStorageKey(currentRoomId);
+      if (lsKey) localStorage.setItem(lsKey, JSON.stringify(state));
+      updateTimestampBadge('กำลังซิงก์...');
+
+      clearTimeout(publishTimer);
+      publishTimer = setTimeout(async () => {
+        try {
+          const payload = serializeStateCompact(state);
+          await fetch(getRoomTopicUrl(currentRoomId), {
+            method: 'POST',
+            body: payload
+          });
+          updateTimestampBadge('ซิงก์ให้เพื่อนทุกคนแล้ว ✓');
+        } catch (err) {
+          console.warn('Broadcast failed:', err);
+          updateTimestampBadge('บันทึกในเครื่องแล้ว');
+        }
+      }, 220);
+    }
+
+    async function fetchLatestRoomState(roomId) {
+      try {
+        const res = await fetch(`${getRoomTopicUrl(roomId)}/json?poll=1&since=all`);
+        if (!res.ok) return false;
+        const text = await res.text();
+        const lines = text.trim().split('\n').filter(Boolean);
+        let latestValid = null;
+        for (const line of lines) {
+          try {
+            const evt = JSON.parse(line);
+            if (evt.event === 'message' && evt.message) {
+              const parsed = JSON.parse(evt.message);
+              if (parsed && parsed.d && Array.isArray(parsed.f)) {
+                latestValid = parsed;
+              }
+            }
+          } catch (_) {}
+        }
+        if (latestValid) {
+          applyCompactPayload(latestValid, true);
+          return true;
+        }
+      } catch (e) {
+        console.warn('Initial room poll error:', e);
+      }
+      return false;
+    }
+
+    function connectRealtimeStream(roomId) {
+      if (!roomId) return;
+      try {
+        if (eventSource) eventSource.close();
+        eventSource = new EventSource(`${getRoomTopicUrl(roomId)}/sse`);
+        eventSource.onopen = () => {
+          updateRoomStatusUI(true);
+        };
+        eventSource.onmessage = (e) => {
+          try {
+            const evt = JSON.parse(e.data);
+            if (evt.event === 'message' && evt.message) {
+              const applied = applyCompactPayload(evt.message, false);
+              if (applied) {
+                showToast('⚡ เพื่อนอัปเดตตารางสดๆ!');
+              }
+            }
+          } catch (_) {}
+        };
+        eventSource.onerror = () => {
+          updateRoomStatusUI(false);
+        };
+      } catch (e) {
+        console.warn('SSE error:', e);
+      }
+    }
+
+    function updateTimestampBadge(text) {
+      const el = document.getElementById('lastSyncedTime');
+      if (el) el.textContent = text;
+    }
+
+    // ==========================================
+    // 3. CALCULATIONS & HELPERS
+    // ==========================================
+    function getDateStats(dateId) {
+      let free = 0;
+      let busy = 0;
+      let maybe = 0;
+      let empty = 0;
+      const freeNames = [];
+      const busyNames = [];
+      const maybeNames = [];
+
+      state.friends.forEach((f) => {
+        const st = state.availability[f]?.[dateId] || 'empty';
+        if (st === 'free') { free++; freeNames.push(f); }
+        else if (st === 'busy') { busy++; busyNames.push(f); }
+        else if (st === 'maybe') { maybe++; maybeNames.push(f); }
+        else { empty++; }
+      });
+
+      return { free, busy, maybe, empty, freeNames, busyNames, maybeNames };
+    }
+
+    function getMaxFreeCount() {
+      let max = 0;
+      state.dates.forEach((d) => {
+        const { free } = getDateStats(d.id);
+        if (free > max) max = free;
+      });
+      return max;
+    }
+
+    function getFilteredDates() {
+      const maxFree = getMaxFreeCount();
+      return state.dates.filter((d) => {
+        if (monthFilter === 'all') return true;
+        if (monthFilter === 'best') {
+          const { free, busy } = getDateStats(d.id);
+          return maxFree > 0 ? (free === maxFree && busy === 0) || free === maxFree : true;
+        }
+        const parts = d.id.split('/');
+        return parts[1] === monthFilter;
+      });
+    }
+
+    function formatShortThaiDate(dateStr) {
+      const parts = dateStr.split('/');
+      if (parts.length < 3) return dateStr;
+      const day = parseInt(parts[0], 10);
+      const monthNames = {
+        '01': 'ม.ค.', '02': 'ก.พ.', '03': 'มี.ค.', '04': 'เม.ย.',
+        '05': 'พ.ค.', '06': 'มิ.ย.', '07': 'ก.ค.', '08': 'ส.ค.',
+        '09': 'ก.ย.', '10': 'ต.ค.', '11': 'พ.ย.', '12': 'ธ.ค.'
+      };
+      return `${day} ${monthNames[parts[1]] || parts[1]}`;
+    }
+
+    // ==========================================
+    // 4. RENDER UI
+    // ==========================================
+    function renderAll() {
+      document.getElementById('tripTitleDisplay').textContent = state.title || 'เช็ควันเที่ยวกับเพื่อน 2026';
+      document.getElementById('meetupPlaceInput').value = state.meetupPlace || '';
+      document.getElementById('meetupTimeInput').value = state.meetupTime || '';
+
+      renderToolbarButtons();
+      renderSummaryStats();
+      renderGrid();
+      renderWeekendRankings();
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function renderToolbarButtons() {
+      const modes = ['cycle', 'free', 'busy', 'maybe', 'empty'];
+      modes.forEach((m) => {
+        const btn = document.getElementById(`modeBtn-${m}`);
+        if (!btn) return;
+        if (paintMode === m) {
+          btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold transition-all border bg-orange-500 text-white border-orange-400 shadow-md shadow-orange-500/20';
+        } else {
+          btn.className = 'px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border bg-slate-800/90 text-slate-300 border-slate-700 hover:bg-slate-700';
+        }
+      });
+
+      const filters = ['all', '10', '11', '12', 'best'];
+      filters.forEach((f) => {
+        const btn = document.getElementById(`filter-${f}`);
+        if (!btn) return;
+        if (f === 'all') btn.textContent = `ทั้งหมด (${state.dates.length})`;
+        if (monthFilter === f) {
+          btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-sky-500 text-white shadow-md shadow-sky-500/20';
+        } else {
+          btn.className = 'px-3 py-1.5 rounded-xl text-xs font-semibold transition-all bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700';
+        }
+      });
+    }
+
+    function renderSummaryStats() {
+      const totalFriends = state.friends.length;
+      const totalDates = state.dates.length;
+      const holidays = state.dates.filter(d => d.isHoliday).length;
+
+      let answeredFriends = 0;
+      state.friends.forEach((f) => {
+        const hasAny = state.dates.some(d => (state.availability[f]?.[d.id] || 'empty') !== 'empty');
+        if (hasAny) answeredFriends++;
+      });
+
+      document.getElementById('statTotalFriends').textContent = totalFriends;
+      document.getElementById('statAnsweredFriends').textContent = totalFriends > 0
+        ? `ลงเวลาแล้ว ${answeredFriends}/${totalFriends} คน`
+        : 'ยังไม่มีรายชื่อในตาราง';
+      document.getElementById('statTotalDates').textContent = totalDates;
+      document.getElementById('statHolidayCount').textContent = `มีวันหยุดพิเศษ ${holidays} วัน (สีส้ม)`;
+
+      const maxFree = getMaxFreeCount();
+      const bestDates = state.dates.filter(d => {
+        const st = getDateStats(d.id);
+        return st.free === maxFree && maxFree > 0;
+      });
+
+      document.getElementById('statBestCountBadge').textContent = `ว่างสูงสุด ${maxFree}/${totalFriends} คน`;
+      if (totalFriends === 0) {
+        document.getElementById('statBestDatesText').textContent = 'ยังไม่มีรายชื่อเพื่อน';
+        document.getElementById('statReadyStatus').textContent = 'กดปุ่ม "+ เพิ่มชื่อตัวเอง / เพื่อน" ด้านบนเพื่อเริ่มได้เลย';
+      } else if (bestDates.length === 0) {
+        document.getElementById('statBestDatesText').textContent = 'ยังไม่มีใครกดเลือกวันว่าง';
+        document.getElementById('statReadyStatus').textContent = 'จิ้มที่ช่องในตารางเพื่อเลือกวันที่ว่างได้เลย';
+      } else {
+        if (bestDates.length <= 2) {
+          document.getElementById('statBestDatesText').textContent = bestDates.map(d => `${d.id} (${d.dow})`).join(', ');
+        } else {
+          document.getElementById('statBestDatesText').textContent = `${bestDates[0].id} (${bestDates[0].dow}) และอีก ${bestDates.length - 1} วัน`;
+        }
+        const remaining = totalFriends - answeredFriends;
+        document.getElementById('statReadyStatus').textContent = remaining > 0
+          ? `รอเพื่อนมาลงเวลาเพิ่มอีก ${remaining} คน (${state.friends.filter(f => !state.dates.some(d => (state.availability[f]?.[d.id] || 'empty') !== 'empty')).join(', ')})`
+          : '🎉 เพื่อนลงเวลาครบทุกคนแล้ว!';
+      }
+    }
+
+    function renderGrid() {
+      const dates = getFilteredDates();
+      const maxFree = getMaxFreeCount();
+      const totalFriends = state.friends.length;
+
+      let headHTML = `
+        <tr class="border-b border-slate-800">
+          <th class="sticky-col sticky-col-shadow bg-[#ead1dc] text-slate-950 font-extrabold text-sm px-4 py-3 min-w-[160px] max-w-[190px] border-r border-slate-700 text-left">
+            <div class="flex items-center justify-between">
+              <span>Date</span>
+              <span class="text-[11px] font-semibold px-1.5 py-0.5 rounded bg-black/15 text-slate-900">${dates.length} วัน</span>
+            </div>
+          </th>
+      `;
+
+      dates.forEach((d) => {
+        const { free, busy } = getDateStats(d.id);
+        const isTop = maxFree > 0 && free === maxFree && busy === 0;
+        headHTML += `
+          <th class="px-2 py-2.5 min-w-[96px] border-r border-slate-800/80 ${isTop ? 'bg-emerald-950/40' : 'bg-slate-900/95'} hover:bg-slate-800/80 transition-colors cursor-pointer group relative"
+              onclick="toggleHoliday('${d.id}')"
+              title="คลิกเพื่อสลับสีส้ม (วันหยุดพิเศษ)">
+            ${isTop ? `<div class="text-[10px] font-extrabold text-emerald-400 mb-0.5">★ ว่างตรงกัน!</div>` : ''}
+            <div class="text-xs font-bold text-slate-100 tracking-tight">${d.label}</div>
+            <div class="text-[11px] text-slate-400 font-normal">${formatShortThaiDate(d.label)}</div>
+          </th>
+        `;
+      });
+      headHTML += `</tr>`;
+
+      headHTML += `
+        <tr class="border-b-2 border-slate-700">
+          <th class="sticky-col sticky-col-shadow bg-slate-900 text-slate-400 text-xs font-semibold px-4 py-2 border-r border-slate-700 text-left">
+            <div class="flex items-center justify-between">
+              <span>ชื่อเพื่อน (${totalFriends} คน)</span>
+              <button onclick="openAddFriendModal()" class="text-[11px] text-sky-400 hover:text-sky-300 font-bold">+ เพิ่ม</button>
+            </div>
+          </th>
+      `;
+
+      dates.forEach((d) => {
+        const dowStyle = d.isHoliday
+          ? 'bg-[#ff9900] text-slate-950 font-extrabold shadow-inner'
+          : (d.dow === 'Sun' ? 'bg-slate-800/80 text-rose-300 font-semibold' : 'bg-slate-800/50 text-sky-300 font-semibold');
+        headHTML += `
+          <th class="px-2 py-1.5 text-xs border-r border-slate-800/80 cursor-pointer ${dowStyle}"
+              onclick="toggleHoliday('${d.id}')"
+              title="คลิกเพื่อเปิด/ปิดสีส้ม (วันหยุด)">
+            <div class="flex items-center justify-center gap-1">
+              <span>${d.dow}</span>
+              ${d.isHoliday ? '<span class="text-[10px]">🏖️</span>' : ''}
+            </div>
+          </th>
+        `;
+      });
+      headHTML += `</tr>`;
+      document.getElementById('gridHead').innerHTML = headHTML;
+
+      // TBODY
+      let bodyHTML = '';
+      if (state.friends.length === 0) {
+        bodyHTML = `
+          <tr class="border-b border-slate-800/70">
+            <td colspan="${dates.length + 1}" class="py-12 px-6 text-center bg-slate-900/40">
+              <div class="max-w-md mx-auto flex flex-col items-center gap-3">
+                <div class="w-12 h-12 rounded-2xl bg-sky-500/15 border border-sky-500/30 text-sky-400 flex items-center justify-center">
+                  <i data-lucide="user-plus" class="w-6 h-6"></i>
+                </div>
+                <div>
+                  <h4 class="text-base font-bold text-white">ตารางนี้ยังไม่มีรายชื่อเพื่อน</h4>
+                  <p class="text-xs text-slate-400 mt-1">กดปุ่มด้านล่างเพื่อเพิ่มชื่อคนแรก แล้วส่งลิงก์ให้เพื่อนเข้ามาเพิ่มชื่อตัวเองและจิ้มวันว่างพร้อมกันแบบ Real-time ได้เลย!</p>
+                </div>
+                <button onclick="openAddFriendModal()" class="mt-1 px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs sm:text-sm shadow-lg shadow-sky-500/25 transition-all">
+                  + เพิ่มชื่อคนแรกเข้าตาราง
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      } else {
+        state.friends.forEach((friendName, fIdx) => {
+          let friendFreeCount = 0;
+          let friendBusyCount = 0;
+          state.dates.forEach(d => {
+            const s = state.availability[friendName]?.[d.id] || 'empty';
+            if (s === 'free') friendFreeCount++;
+            else if (s === 'busy') friendBusyCount++;
+          });
+
+          bodyHTML += `
+            <tr class="border-b border-slate-800/70 hover:bg-slate-800/30 transition-colors">
+              <td class="sticky-col sticky-col-shadow bg-slate-900/95 hover:bg-slate-800 px-3.5 py-2.5 border-r border-slate-700 text-left cursor-pointer group"
+                  onclick="openFriendModal(${fIdx})"
+                  title="คลิกเพื่อตั้งค่าทั้งแถวหรือเปลี่ยนชื่อ">
+                <div class="flex items-center justify-between gap-1.5">
+                  <div class="flex items-center gap-2 truncate">
+                    <span class="w-5 h-5 rounded-full bg-slate-800 border border-slate-700 text-[10px] font-bold text-slate-300 flex items-center justify-center shrink-0 group-hover:border-orange-400 group-hover:text-orange-300">
+                      ${fIdx + 1}
+                    </span>
+                    <span class="font-semibold text-sm text-slate-100 group-hover:text-orange-400 transition-colors truncate">${friendName}</span>
+                  </div>
+                  <span class="text-[11px] font-medium px-1.5 py-0.5 rounded-md ${friendFreeCount > 0 ? 'bg-emerald-500/15 text-emerald-400' : (friendBusyCount > 0 ? 'bg-rose-500/15 text-rose-400' : 'bg-slate-800 text-slate-500')}">
+                    ${friendFreeCount}
+                  </span>
+                </div>
+              </td>
+          `;
+
+          dates.forEach((d) => {
+            const st = state.availability[friendName]?.[d.id] || 'empty';
+            let cellBg = 'bg-slate-900/40 hover:bg-slate-800/70';
+            let pillHTML = `<span class="inline-flex items-center justify-center w-[76px] py-1 rounded-lg bg-[#e8eaed]/10 text-slate-500 text-xs font-medium border border-slate-700/50 group-hover:border-slate-500 transition-all">-</span>`;
+
+            if (st === 'free') {
+              cellBg = 'bg-[#b6d7a8]/20 hover:bg-[#b6d7a8]/30';
+              pillHTML = `<span class="inline-flex items-center justify-center w-[76px] py-1 rounded-lg bg-[#11734b] text-[#d4edbc] text-xs font-bold shadow-sm border border-emerald-400/30">ว่าง</span>`;
+            } else if (st === 'busy') {
+              cellBg = 'bg-[#f4cccc]/15 hover:bg-[#f4cccc]/25';
+              pillHTML = `<span class="inline-flex items-center justify-center w-[76px] py-1 rounded-lg bg-rose-700 text-rose-100 text-xs font-bold shadow-sm border border-rose-400/30">ไม่ว่าง</span>`;
+            } else if (st === 'maybe') {
+              cellBg = 'bg-amber-950/30 hover:bg-amber-950/45';
+              pillHTML = `<span class="inline-flex items-center justify-center w-[76px] py-1 rounded-lg bg-amber-600 text-amber-50 text-xs font-bold shadow-sm border border-amber-400/30">อาจจะ</span>`;
+            }
+
+            bodyHTML += `
+              <td class="px-1.5 py-2 border-r border-slate-800/60 cursor-pointer group transition-colors ${cellBg}"
+                  onmousedown="handleCellMouseDown('${friendName}', '${d.id}', event)"
+                  onmouseenter="handleCellMouseEnter('${friendName}', '${d.id}')">
+                ${pillHTML}
+              </td>
+            `;
+          });
+
+          bodyHTML += `</tr>`;
+        });
+      }
+      document.getElementById('gridBody').innerHTML = bodyHTML;
+
+      // TFOOT
+      let footFreeRow = `
+        <tr class="border-t-2 border-slate-700 bg-slate-900/90">
+          <td class="sticky-col sticky-col-shadow bg-slate-900 px-4 py-2.5 border-r border-slate-700 text-left font-bold text-xs text-emerald-400 flex items-center justify-between">
+            <span>ว่าง</span>
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+          </td>
+      `;
+
+      let footBusyRow = `
+        <tr class="border-t border-slate-800 bg-slate-900/90">
+          <td class="sticky-col sticky-col-shadow bg-slate-900 px-4 py-2.5 border-r border-slate-700 text-left font-bold text-xs text-rose-400 flex items-center justify-between">
+            <span>ไม่ว่าง</span>
+            <span class="w-2 h-2 rounded-full bg-rose-400"></span>
+          </td>
+      `;
+
+      let footSummaryRow = `
+        <tr class="border-t-2 border-slate-700">
+          <td class="sticky-col sticky-col-shadow bg-[#ff9900] text-slate-950 px-4 py-2.5 border-r border-slate-700 text-center font-extrabold text-sm">
+            สรุป
+          </td>
+      `;
+
+      dates.forEach((d) => {
+        const { free, busy, maybe, freeNames, busyNames } = getDateStats(d.id);
+        const isBest = maxFree > 0 && free === maxFree && busy === 0;
+
+        footFreeRow += `
+          <td class="px-2 py-2 border-r border-slate-800 font-bold text-sm ${isBest ? 'text-emerald-300 bg-emerald-950/40' : 'text-slate-200'}"
+              title="คนที่ว่าง: ${freeNames.join(', ') || '-'}">
+            ${free}
+            ${maybe > 0 ? `<span class="text-[10px] text-amber-400 font-normal">(+${maybe})</span>` : ''}
+          </td>
+        `;
+
+        footBusyRow += `
+          <td class="px-2 py-2 border-r border-slate-800 font-semibold text-sm ${busy > 0 ? 'text-rose-400 bg-rose-950/20' : 'text-slate-500'}"
+              title="คนที่ไม่ว่าง: ${busyNames.join(', ') || '-'}">
+            ${busy}
+          </td>
+        `;
+
+        let summaryCell = '';
+        if (free === totalFriends && totalFriends > 0) {
+          summaryCell = `
+            <td class="px-2 py-2.5 border-r border-slate-800 bg-emerald-500 text-slate-950 font-extrabold text-xs tracking-wide">
+              ✓ ครบแก๊ง!
+            </td>
+          `;
+        } else if (isBest && free >= 2) {
+          summaryCell = `
+            <td class="px-2 py-2.5 border-r border-slate-800 bg-emerald-900/80 text-emerald-200 font-extrabold text-xs">
+              ★ ว่าง ${free}
+            </td>
+          `;
+        } else {
+          summaryCell = `
+            <td class="px-2 py-2.5 border-r border-slate-800 bg-black text-white font-extrabold text-sm">
+              X
+            </td>
+          `;
+        }
+        footSummaryRow += summaryCell;
+      });
+
+      footFreeRow += `</tr>`;
+      footBusyRow += `</tr>`;
+      footSummaryRow += `</tr>`;
+
+      document.getElementById('gridFoot').innerHTML = footFreeRow + footBusyRow + footSummaryRow;
+    }
+
+    function renderWeekendRankings() {
+      const blocks = [
+        { title: 'เสาร์-อาทิตย์ สิ้นเดือน พ.ย. (28–29 พ.ย.)', ids: ['28/11/2026', '29/11/2026'], tag: 'เสาร์-อาทิตย์' },
+        { title: 'เสาร์-อาทิตย์ 12–13 ธ.ค.', ids: ['12/12/2026', '13/12/2026'], tag: 'เสาร์-อาทิตย์' },
+        { title: 'เสาร์-อาทิตย์ 19–20 ธ.ค.', ids: ['19/12/2026', '20/12/2026'], tag: 'เสาร์-อาทิตย์' },
+        { title: 'เสาร์-อาทิตย์ ส่งท้ายปี (26–27 ธ.ค.)', ids: ['26/12/2026', '27/12/2026'], tag: 'เสาร์-อาทิตย์' },
+        { title: 'หยุดยาววันพ่อ (5–7 ธ.ค.)', ids: ['05/12/2026', '06/12/2026', '07/12/2026'], tag: 'หยุดยาว 3 วัน' },
+        { title: 'หยุดยาววันปิยมหาราช (23–25 ต.ค.)', ids: ['23/10/2026', '24/10/2026', '25/10/2026'], tag: 'หยุดยาว 3 วัน' },
+        { title: 'เสาร์-อาทิตย์ สิ้นเดือน ต.ค. (31 ต.ค.–1 พ.ย.)', ids: ['31/10/2026', '01/11/2026'], tag: 'เสาร์-อาทิตย์' },
+        { title: 'เสาร์-อาทิตย์ ต้นเดือน พ.ย. (7–8 พ.ย.)', ids: ['07/11/2026', '08/11/2026'], tag: 'เสาร์-อาทิตย์' },
+        { title: 'เสาร์-อาทิตย์ กลางเดือน พ.ย. (14–15 พ.ย.)', ids: ['14/11/2026', '15/11/2026'], tag: 'เสาร์-อาทิตย์' },
+        { title: 'เสาร์-อาทิตย์ 21–22 พ.ย.', ids: ['21/11/2026', '22/11/2026'], tag: 'เสาร์-อาทิตย์' },
+      ];
+
+      const scored = blocks.map((b) => {
+        const existingIds = b.ids.filter(id => state.dates.some(d => d.id === id));
+        if (existingIds.length === 0) return null;
+
+        const allFreeFriends = state.friends.filter(f =>
+          existingIds.every(id => (state.availability[f]?.[id] || 'empty') === 'free')
+        );
+        const anyBusyFriends = state.friends.filter(f =>
+          existingIds.some(id => (state.availability[f]?.[id] || 'empty') === 'busy')
+        );
+
+        return {
+          ...b,
+          allFreeCount: allFreeFriends.length,
+          allFreeFriends,
+          anyBusyCount: anyBusyFriends.length,
+          anyBusyFriends,
+          isLongWeekend: b.tag.includes('3 วัน')
+        };
+      }).filter(Boolean);
+
+      scored.sort((a, b) => {
+        if (b.allFreeCount !== a.allFreeCount) return b.allFreeCount - a.allFreeCount;
+        if (a.anyBusyCount !== b.anyBusyCount) return a.anyBusyCount - b.anyBusyCount;
+        return (b.isLongWeekend ? 1 : 0) - (a.isLongWeekend ? 1 : 0);
+      });
+
+      const top3 = scored.slice(0, 3);
+      const container = document.getElementById('weekendRankingCards');
+      container.innerHTML = top3.map((item, idx) => {
+        const rankColors = [
+          'border-emerald-500/40 bg-gradient-to-br from-emerald-950/40 to-slate-900',
+          'border-sky-500/30 bg-slate-950/60',
+          'border-slate-700/80 bg-slate-950/60'
+        ];
+        const badgeColors = [
+          'bg-emerald-500 text-slate-950',
+          'bg-sky-500 text-slate-950',
+          'bg-slate-700 text-slate-200'
+        ];
+        return `
+          <div class="p-4 rounded-2xl border ${rankColors[idx]} flex flex-col justify-between gap-2">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-1.5">
+                <span class="px-2 py-0.5 rounded-full text-[11px] font-extrabold ${badgeColors[idx]}">
+                  อันดับ #${idx + 1}
+                </span>
+                <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full ${item.isLongWeekend ? 'bg-orange-500/20 text-orange-300 border border-orange-500/30' : 'bg-slate-800 text-slate-400'}">
+                  ${item.tag}
+                </span>
+              </div>
+              <h4 class="font-bold text-sm text-white">${item.title}</h4>
+            </div>
+            <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs">
+              <span class="text-emerald-400 font-semibold">ว่างครบทุกวัน: ${item.allFreeCount}/${state.friends.length} คน</span>
+              <span class="text-rose-400">ติดธุระ: ${item.anyBusyCount} คน</span>
+            </div>
+            <div class="text-[11px] text-slate-400 truncate">
+              ${item.allFreeFriends.length > 0 ? `พร้อมลุย: ${item.allFreeFriends.join(', ')}` : 'ยังไม่มีคนว่างครบทุกวันในช่วงนี้'}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ==========================================
+    // 5. INTERACTIONS & EVENTS
+    // ==========================================
+    function getNextStatus(current) {
+      const order = ['empty', 'free', 'busy', 'maybe'];
+      const idx = order.indexOf(current);
+      return order[(idx + 1) % order.length];
+    }
+
+    function handleCellMouseDown(friendName, dateId, event) {
+      event.preventDefault();
+      isMouseDown = true;
+      if (!state.availability[friendName]) state.availability[friendName] = {};
+      const current = state.availability[friendName][dateId] || 'empty';
+      const next = paintMode === 'cycle' ? getNextStatus(current) : paintMode;
+      dragPaintValue = next;
+      state.availability[friendName][dateId] = next;
+      renderAll();
+      scheduleBroadcast();
+    }
+
+    function handleCellMouseEnter(friendName, dateId) {
+      if (!isMouseDown || !dragPaintValue) return;
+      if (!state.availability[friendName]) state.availability[friendName] = {};
+      if (state.availability[friendName][dateId] !== dragPaintValue) {
+        state.availability[friendName][dateId] = dragPaintValue;
+        renderAll();
+        scheduleBroadcast();
+      }
+    }
+
+    window.addEventListener('mouseup', () => {
+      isMouseDown = false;
+      dragPaintValue = null;
+    });
+
+    function setPaintMode(mode) {
+      paintMode = mode;
+      renderToolbarButtons();
+    }
+
+    function setMonthFilter(filter) {
+      monthFilter = filter;
+      renderAll();
+    }
+
+    function toggleHoliday(dateId) {
+      const target = state.dates.find(d => d.id === dateId);
+      if (!target) return;
+      target.isHoliday = !target.isHoliday;
+      renderAll();
+      scheduleBroadcast();
+      showToast(`${target.id}: ${target.isHoliday ? 'ตั้งเป็นวันหยุดพิเศษ (สีส้ม)' : 'ตั้งเป็นวันปกติ'}`);
+    }
+
+    function editTripTitle() {
+      const next = prompt('ตั้งชื่อทริปของคุณ:', state.title);
+      if (next && next.trim()) {
+        state.title = next.trim();
+        renderAll();
+        scheduleBroadcast();
+      }
+    }
+
+    function saveMeetupInfo() {
+      state.meetupPlace = document.getElementById('meetupPlaceInput').value;
+      state.meetupTime = document.getElementById('meetupTimeInput').value;
+      scheduleBroadcast();
+    }
+
+    // Friend Modal
+    function openFriendModal(friendIdx) {
+      activeFriendIndex = friendIdx;
+      const friendName = state.friends[friendIdx];
+      document.getElementById('friendModalTitle').textContent = `จัดการเวลาของ "${friendName}"`;
+      document.getElementById('friendModalNameInput').value = friendName;
+      const modal = document.getElementById('friendModal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeFriendModal() {
+      const modal = document.getElementById('friendModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      activeFriendIndex = null;
+    }
+
+    function bulkSetFriendStatus(mode) {
+      if (activeFriendIndex === null) return;
+      const friendName = state.friends[activeFriendIndex];
+      if (!state.availability[friendName]) state.availability[friendName] = {};
+
+      const longWeekendIds = ['23/10/2026', '24/10/2026', '25/10/2026', '05/12/2026', '06/12/2026', '07/12/2026'];
+
+      state.dates.forEach((d) => {
+        if (mode === 'holiday_free') {
+          state.availability[friendName][d.id] = (d.isHoliday || longWeekendIds.includes(d.id)) ? 'free' : 'empty';
+        } else {
+          state.availability[friendName][d.id] = mode;
+        }
+      });
+
+      renderAll();
+      scheduleBroadcast();
+      closeFriendModal();
+      showToast(`อัปเดตตารางของ "${friendName}" ให้ทุกคนเห็นแล้ว!`);
+    }
+
+    function saveFriendModalName() {
+      if (activeFriendIndex === null) return;
+      const oldName = state.friends[activeFriendIndex];
+      const newName = document.getElementById('friendModalNameInput').value.trim();
+      if (!newName) return;
+
+      if (newName !== oldName) {
+        if (state.friends.includes(newName)) {
+          alert('มีชื่อเพื่อนคนนี้ในตารางแล้ว');
+          return;
+        }
+        state.friends[activeFriendIndex] = newName;
+        state.availability[newName] = state.availability[oldName] || {};
+        delete state.availability[oldName];
+      }
+
+      renderAll();
+      scheduleBroadcast();
+      closeFriendModal();
+      showToast('บันทึกชื่อเรียบร้อย');
+    }
+
+    function deleteCurrentFriend() {
+      if (activeFriendIndex === null) return;
+      const name = state.friends[activeFriendIndex];
+      if (!confirm(`ต้องการลบ "${name}" ออกจากตารางใช่หรือไม่?`)) return;
+      state.friends.splice(activeFriendIndex, 1);
+      delete state.availability[name];
+      renderAll();
+      scheduleBroadcast();
+      closeFriendModal();
+      showToast(`ลบ "${name}" แล้ว`);
+    }
+
+    function openAddFriendModal() {
+      const name = prompt('ใส่ชื่อของคุณหรือชื่อเพื่อนที่ต้องการเพิ่ม:');
+      if (!name || !name.trim()) return;
+      const clean = name.trim();
+      if (state.friends.includes(clean)) {
+        alert('มีชื่อนี้ในตารางอยู่แล้วครับ');
+        return;
+      }
+      state.friends.push(clean);
+      state.availability[clean] = {};
+      state.dates.forEach(d => {
+        state.availability[clean][d.id] = 'empty';
+      });
+      renderAll();
+      scheduleBroadcast();
+      showToast(`เพิ่ม "${clean}" เข้าตารางแล้ว!`);
+    }
+
+    function openAddDateModal() {
+      const dateStr = prompt('ใส่วันที่ต้องการเพิ่ม (รูปแบบ DD/MM/YYYY เช่น 28/12/2026):');
+      if (!dateStr || !dateStr.trim()) return;
+      const clean = dateStr.trim();
+      if (state.dates.some(d => d.id === clean)) {
+        alert('มีวันที่นี้ในตารางอยู่แล้วครับ');
+        return;
+      }
+
+      let dow = 'Sat';
+      const parts = clean.split('/');
+      if (parts.length === 3) {
+        const dt = new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
+        if (!isNaN(dt.getTime())) {
+          const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+          dow = days[dt.getDay()];
+        }
+      }
+
+      const isHoliday = confirm('ต้องการไฮไลท์สีส้ม (วันหยุดพิเศษ) สำหรับวันนี้ด้วยไหม?');
+      state.dates.push({
+        id: clean,
+        label: clean,
+        dow,
+        isHoliday
+      });
+      state.friends.forEach(f => {
+        if (!state.availability[f]) state.availability[f] = {};
+        state.availability[f][clean] = 'empty';
+      });
+      renderAll();
+      scheduleBroadcast();
+      showToast(`เพิ่มวันที่ ${clean} (${dow}) แล้ว`);
+    }
+
+    // ==========================================
+    // 6. SHARE / NEW ROOM / EXPORT
+    // ==========================================
+    function shareRealtimeRoomLink() {
+      ensureRoomIdCreated();
+      scheduleBroadcast();
+      const url = window.location.href;
+      navigator.clipboard.writeText(url).then(() => {
+        showToast('คัดลอกลิงก์ห้อง Real-time แล้ว! ส่งให้เพื่อนเปิดกรอกพร้อมกันได้เลย 🔗');
+      }).catch(() => {
+        prompt('คัดลอกลิงก์ห้อง Real-time ด้านล่างนี้ส่งให้เพื่อนได้เลย:', url);
+      });
+    }
+
+    function createNewBlankRoom() {
+      window.location.href = window.location.pathname;
+    }
+
+    function clearAllFriendsInRoom() {
+      if (!confirm('ต้องการลบรายชื่อทั้งหมดในห้องนี้ให้เป็นตารางว่างใช่หรือไม่?')) return;
+      state.friends = [];
+      state.availability = {};
+      renderAll();
+      scheduleBroadcast();
+      toggleMoreMenu(false);
+      showToast('ล้างรายชื่อทั้งหมดแล้ว');
+    }
+
+    function copyLineSummary() {
+      ensureRoomIdCreated();
+      const totalFriends = state.friends.length;
+      const topDates = state.dates
+        .map(d => ({ ...d, stats: getDateStats(d.id) }))
+        .filter(d => d.stats.free > 0)
+        .sort((a, b) => b.stats.free - a.stats.free || a.stats.busy - b.stats.busy)
+        .slice(0, 5);
+
+      const unanswered = state.friends.filter(f =>
+        !state.dates.some(d => (state.availability[f]?.[d.id] || 'empty') !== 'empty')
+      );
+
+      let text = `📅 สรุปผล "${state.title}"\n`;
+      if (state.meetupPlace || state.meetupTime) {
+        text += `📍 นัดพบ: ${state.meetupPlace || '-'} | ⏰ เวลา: ${state.meetupTime || '-'}\n`;
+      }
+      text += `👥 ลงเวลาแล้ว: ${totalFriends - unanswered.length}/${totalFriends} คน\n\n`;
+
+      if (topDates.length > 0) {
+        text += `🏆 วันที่เพื่อนว่างตรงกันมากที่สุด:\n`;
+        topDates.forEach((d, idx) => {
+          text += `${idx + 1}. ${d.id} (${d.dow}${d.isHoliday ? ' 🏖️วันหยุด' : ''}) — ว่าง ${d.stats.free} คน (${d.stats.freeNames.join(', ')})${d.stats.busy > 0 ? ` [ติดธุระ ${d.stats.busy}]` : ''}\n`;
+        });
+      }
+
+      if (unanswered.length > 0) {
+        text += `\n📢 รอมาลงเวลา (${unanswered.length} คน): ${unanswered.join(', ')}\n`;
+      }
+
+      text += `\n🔗 เข้าไปจิ้มวันว่างแบบ Real-time ได้ที่: ${window.location.href}`;
+
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('คัดลอกข้อความสรุปแล้ว! กดวางในกลุ่ม LINE / Discord ได้เลย 💬');
+      });
+    }
+
+    function exportCSV() {
+      const rows = [];
+      rows.push(['Date', ...state.dates.map(d => d.id)]);
+      rows.push(['', ...state.dates.map(d => d.dow)]);
+      const labelMap = { free: 'ว่าง', busy: 'ไม่ว่าง', maybe: 'อาจจะ', empty: '' };
+
+      state.friends.forEach(f => {
+        rows.push([f, ...state.dates.map(d => labelMap[state.availability[f]?.[d.id] || 'empty'])]);
+      });
+
+      rows.push([]);
+      rows.push(['ว่าง', ...state.dates.map(d => getDateStats(d.id).free)]);
+      rows.push(['ไม่ว่าง', ...state.dates.map(d => getDateStats(d.id).busy)]);
+      rows.push(['สรุป', ...state.dates.map(d => (state.friends.length > 0 && getDateStats(d.id).free === state.friends.length) ? 'OK' : 'X')]);
+
+      const csvContent = '\uFEFF' + rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'เช็ควันเที่ยว.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+      toggleMoreMenu(false);
+    }
+
+    function toggleMoreMenu(force) {
+      const menu = document.getElementById('moreMenu');
+      if (typeof force === 'boolean') {
+        menu.classList.toggle('hidden', !force);
+      } else {
+        menu.classList.toggle('hidden');
+      }
+    }
+
+    document.addEventListener('click', (e) => {
+      const menu = document.getElementById('moreMenu');
+      if (!menu) return;
+      if (!e.target.closest('#moreMenu') && !e.target.closest('button[onclick="toggleMoreMenu()"]')) {
+        menu.classList.add('hidden');
+      }
+    });
+
+    let toastTimer = null;
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMessage').textContent = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3200);
+    }
+
+    // ==========================================
+    // 7. BOOT SEQUENCE
+    // ==========================================
+    async function initApp() {
+      const params = new URLSearchParams(window.location.search);
+      const roomParam = params.get('room');
+
+      if (!roomParam) {
+        // Root URL (/): Always start completely blank with 0 friends!
+        currentRoomId = null;
+        state = buildBlankState();
+        updateRoomStatusUI(false);
+        renderAll();
+        return;
+      }
+
+      currentRoomId = roomParam.trim();
+      updateRoomStatusUI(false);
+
+      // Load room seed or local cache while fetching cloud room state
+      const lsKey = getLocalStorageKey(currentRoomId);
+      const cached = lsKey ? localStorage.getItem(lsKey) : null;
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          if (parsed && parsed.dates && Array.isArray(parsed.friends)) {
+            state = parsed;
+          }
+        } catch (_) {}
+      } else if (currentRoomId === 'gang2026') {
+        // Dedicated shared URL for the existing 11 friends from the sheet
+        state = buildGangPresetState();
+      } else {
+        state = buildBlankState();
+      }
+
+      renderAll();
+
+      // Pull latest state from the real-time room channel
+      const foundInCloud = await fetchLatestRoomState(currentRoomId);
+      if (!foundInCloud && currentRoomId === 'gang2026') {
+        // Seed the cloud channel once so anyone opening ?room=gang2026 sees the latest state
+        scheduleBroadcast();
+      }
+
+      // Connect SSE stream for instant updates whenever any friend edits
+      connectRealtimeStream(currentRoomId);
+    }
+
+    initApp();
+  </script>
+</body>
+</html>

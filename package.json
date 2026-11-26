@@ -1,0 +1,9 @@
+{
+  "name": "check-wan-tiew",
+  "version": "1.0.0",
+  "description": "เว็บเช็ควันเที่ยวกับเพื่อน (Trip Date Planner)",
+  "private": true,
+  "scripts": {
+    "start": "npx serve ."
+  }
+}
