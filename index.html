@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="th" class="dark">
+<html lang="th">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,7 +11,6 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <script>
     tailwind.config = {
-      darkMode: 'class',
       theme: {
         extend: {
           fontFamily: {
@@ -25,12 +24,13 @@
   <style>
     body {
       font-family: 'IBM Plex Sans Thai', 'Plus Jakarta Sans', sans-serif;
-      background-color: #0b0f19;
+      background-color: #f0f9ff;
       background-image: 
-        radial-gradient(at 0% 0%, rgba(249, 115, 22, 0.12) 0px, transparent 50%),
-        radial-gradient(at 100% 0%, rgba(16, 185, 129, 0.10) 0px, transparent 50%),
-        radial-gradient(at 50% 100%, rgba(99, 102, 241, 0.08) 0px, transparent 50%);
+        radial-gradient(at 0% 0%, rgba(14, 165, 233, 0.14) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(20, 184, 166, 0.14) 0px, transparent 50%),
+        radial-gradient(at 50% 100%, rgba(254, 243, 199, 0.45) 0px, transparent 55%);
       background-attachment: fixed;
+      color: #0f172a;
     }
 
     ::-webkit-scrollbar {
@@ -38,16 +38,16 @@
       width: 10px;
     }
     ::-webkit-scrollbar-track {
-      background: rgba(15, 23, 42, 0.8);
+      background: #e0f2fe;
       border-radius: 8px;
     }
     ::-webkit-scrollbar-thumb {
-      background: rgba(71, 85, 105, 0.7);
+      background: #7dd3fc;
       border-radius: 8px;
-      border: 2px solid rgba(15, 23, 42, 0.8);
+      border: 2px solid #e0f2fe;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: rgba(100, 116, 139, 0.9);
+      background: #38bdf8;
     }
 
     .sticky-col {
@@ -56,12 +56,12 @@
       z-index: 20;
     }
     .sticky-col-shadow {
-      box-shadow: 6px 0 16px -4px rgba(0, 0, 0, 0.45);
+      box-shadow: 6px 0 14px -4px rgba(14, 116, 144, 0.12);
     }
 
     @keyframes pulse-dot {
       0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(1.25); }
+      50% { opacity: 0.45; transform: scale(1.25); }
     }
     .live-dot {
       animation: pulse-dot 2s infinite ease-in-out;
@@ -76,74 +76,74 @@
     }
   </style>
 </head>
-<body class="text-slate-100 min-h-screen selection:bg-orange-500 selection:text-white pb-16">
+<body class="text-slate-800 min-h-screen selection:bg-cyan-500 selection:text-white pb-16">
 
   <!-- Top Navigation / Header -->
-  <header class="border-b border-slate-800/80 bg-slate-900/75 backdrop-blur-xl sticky top-0 z-40">
+  <header class="border-b border-cyan-200/80 bg-white/85 backdrop-blur-xl sticky top-0 z-40 shadow-sm shadow-cyan-900/5">
     <div class="max-w-[1440px] mx-auto px-4 sm:px-6 py-3.5 flex flex-col md:flex-row md:items-center md:justify-between gap-3.5">
       <div class="flex items-center gap-3.5">
-        <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center shadow-lg shadow-orange-500/25 text-white shrink-0">
-          <i data-lucide="calendar-check-2" class="w-6 h-6"></i>
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-cyan-500 to-sky-600 flex items-center justify-center shadow-lg shadow-cyan-500/25 text-white shrink-0">
+          <i data-lucide="palmtree" class="w-6 h-6"></i>
         </div>
         <div>
           <div class="flex items-center gap-2.5 flex-wrap">
-            <h1 id="tripTitleDisplay" class="text-lg sm:text-2xl font-bold tracking-tight text-white cursor-pointer hover:text-orange-400 transition-colors flex items-center gap-2 group" onclick="openEditTitleModal()" title="คลิกเพื่อเปลี่ยนชื่อทริป">
+            <h1 id="tripTitleDisplay" class="text-lg sm:text-2xl font-bold tracking-tight text-slate-900 cursor-pointer hover:text-cyan-600 transition-colors flex items-center gap-2 group" onclick="openEditTitleModal()" title="คลิกเพื่อเปลี่ยนชื่อทริป">
               <span id="tripTitleText">เช็ควันเที่ยวกับเพื่อน 2026</span>
-              <i data-lucide="pencil" class="w-4 h-4 text-slate-500 group-hover:text-orange-400 transition-colors"></i>
+              <i data-lucide="pencil" class="w-4 h-4 text-slate-400 group-hover:text-cyan-600 transition-colors"></i>
             </h1>
             <!-- Live Room Status Badge -->
-            <span id="liveSyncBadge" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-semibold rounded-full bg-slate-800 text-slate-300 border border-slate-700">
-              <span id="liveDot" class="w-2 h-2 rounded-full bg-slate-400"></span>
-              <span id="liveSyncText">ห้องใหม่ (กด "สร้างลิงก์ห้อง" เพื่อแชร์แบบ Real-time)</span>
+            <span id="liveSyncBadge" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-semibold rounded-full bg-sky-50 text-sky-700 border border-sky-200">
+              <span id="liveDot" class="w-2 h-2 rounded-full bg-sky-400"></span>
+              <span id="liveSyncText">ตารางใหม่</span>
             </span>
           </div>
-          <p class="text-xs text-slate-400 mt-0.5">
-            ทุกคนที่เปิดลิงก์ห้องเดียวกัน เมื่อใครเพิ่มชื่อหรือจิ้มวันว่าง หน้าจอของเพื่อนทุกคนจะอัปเดตทันทีแบบ Real-time
+          <p class="text-xs text-slate-500 mt-0.5">
+            ทุกคนที่เปิดลิงก์ห้องเดียวกัน เมื่อใครเพิ่มชื่อหรือจิ้มวันว่าง หน้าจอของเพื่อนทุกคนจะอัปเดตทันทีแบบ Real-time 🌊
           </p>
         </div>
       </div>
 
       <!-- Action Buttons -->
       <div class="flex items-center gap-2 flex-wrap">
-        <button onclick="openSetupRangeModal(false)" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all" title="ตั้งช่วงวันที่เริ่มต้น - สิ้นสุด">
-          <i data-lucide="calendar-range" class="w-4 h-4 text-amber-400"></i>
+        <button onclick="openSetupRangeModal(false)" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-cyan-50 hover:bg-cyan-100 text-cyan-800 border border-cyan-200 transition-all" title="ตั้งช่วงวันที่เริ่มต้น - สิ้นสุด">
+          <i data-lucide="calendar-range" class="w-4 h-4 text-cyan-600"></i>
           <span>กำหนดช่วงวันที่</span>
         </button>
-        <button onclick="openAddFriendModal()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white shadow-md shadow-sky-500/20 transition-all">
+        <button onclick="openAddFriendModal()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-gradient-to-r from-cyan-500 to-sky-600 hover:from-cyan-600 hover:to-sky-700 text-white shadow-md shadow-cyan-500/20 transition-all">
           <i data-lucide="user-plus" class="w-4 h-4"></i>
-          <span>+ เพิ่มชื่อตัวเอง / เพื่อน</span>
+          <span>+ เพิ่มชื่อเพื่อน</span>
         </button>
-        <button onclick="openAddDateModal()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all">
-          <i data-lucide="calendar-plus" class="w-4 h-4 text-orange-400"></i>
+        <button onclick="openAddDateModal()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-white hover:bg-sky-50 text-slate-700 border border-slate-200 transition-all">
+          <i data-lucide="calendar-plus" class="w-4 h-4 text-cyan-600"></i>
           <span>+ เพิ่มวันแยก</span>
         </button>
-        <button onclick="shareRealtimeRoomLink()" id="shareRoomBtn" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-md shadow-orange-500/20 transition-all">
+        <button onclick="shareRealtimeRoomLink()" id="shareRoomBtn" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white shadow-md shadow-teal-500/20 transition-all">
           <i data-lucide="link" class="w-4 h-4"></i>
           <span id="shareRoomBtnText">คัดลอกลิงก์ห้อง Real-time</span>
         </button>
-        <button onclick="copyLineSummary()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 transition-all">
+        <button onclick="copyLineSummary()" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-white hover:bg-sky-50 text-cyan-700 border border-cyan-200 transition-all">
           <i data-lucide="copy" class="w-4 h-4"></i>
           <span>คัดลอกสรุป</span>
         </button>
         <div class="relative group">
-          <button onclick="toggleMoreMenu()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-all" title="ตัวเลือกเพิ่มเติม">
+          <button onclick="toggleMoreMenu()" class="p-2 rounded-xl bg-white hover:bg-sky-50 text-slate-600 border border-slate-200 transition-all" title="ตัวเลือกเพิ่มเติม">
             <i data-lucide="more-vertical" class="w-4 h-4"></i>
           </button>
-          <div id="moreMenu" class="hidden absolute right-0 mt-2 w-64 rounded-2xl bg-slate-800 border border-slate-700 shadow-2xl py-1.5 z-50 text-xs sm:text-sm">
-            <button onclick="createNewBlankRoom()" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-slate-200 hover:bg-slate-700/70 text-left">
-              <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-400"></i>
+          <div id="moreMenu" class="hidden absolute right-0 mt-2 w-64 rounded-2xl bg-white border border-cyan-100 shadow-xl shadow-cyan-900/10 py-1.5 z-50 text-xs sm:text-sm">
+            <button onclick="createNewBlankRoom()" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-slate-700 hover:bg-sky-50 text-left font-medium">
+              <i data-lucide="plus-circle" class="w-4 h-4 text-teal-600"></i>
               สร้างตารางใหม่ (กำหนดช่วงวันใหม่)
             </button>
-            <button onclick="openSetupRangeModal(false); toggleMoreMenu(false);" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-slate-200 hover:bg-slate-700/70 text-left">
-              <i data-lucide="calendar-range" class="w-4 h-4 text-amber-400"></i>
+            <button onclick="openSetupRangeModal(false); toggleMoreMenu(false);" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-slate-700 hover:bg-sky-50 text-left font-medium">
+              <i data-lucide="calendar-range" class="w-4 h-4 text-cyan-600"></i>
               เปลี่ยนช่วงวันที่ (Date Range)
             </button>
-            <button onclick="exportCSV()" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-slate-200 hover:bg-slate-700/70 text-left">
-              <i data-lucide="download" class="w-4 h-4 text-sky-400"></i>
+            <button onclick="exportCSV()" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-slate-700 hover:bg-sky-50 text-left font-medium">
+              <i data-lucide="download" class="w-4 h-4 text-sky-600"></i>
               ดาวน์โหลดไฟล์ CSV
             </button>
-            <hr class="border-slate-700 my-1">
-            <button onclick="openConfirmClearAllModal()" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-rose-400 hover:bg-rose-500/10 text-left">
+            <hr class="border-slate-100 my-1">
+            <button onclick="openConfirmClearAllModal()" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-rose-600 hover:bg-rose-50 text-left font-medium">
               <i data-lucide="trash-2" class="w-4 h-4"></i>
               ลบรายชื่อทั้งหมดในห้องนี้
             </button>
@@ -160,77 +160,77 @@
       
       <!-- Stats Overview (7 cols) -->
       <div class="lg:col-span-7 grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div class="p-4 rounded-2xl bg-slate-900/80 border border-slate-800/90 backdrop-blur flex flex-col justify-between">
-          <div class="flex items-center justify-between text-slate-400 text-xs font-medium">
+        <div class="p-4 rounded-2xl bg-white/90 border border-cyan-100 shadow-sm shadow-cyan-900/5 flex flex-col justify-between">
+          <div class="flex items-center justify-between text-slate-500 text-xs font-semibold">
             <span>แก๊งเพื่อนในตาราง</span>
-            <i data-lucide="users" class="w-4 h-4 text-sky-400"></i>
+            <i data-lucide="users" class="w-4 h-4 text-cyan-600"></i>
           </div>
           <div class="mt-2 flex items-baseline gap-1.5">
-            <span id="statTotalFriends" class="text-2xl sm:text-3xl font-extrabold text-white">0</span>
-            <span class="text-xs text-slate-400">คน</span>
+            <span id="statTotalFriends" class="text-2xl sm:text-3xl font-extrabold text-slate-900">0</span>
+            <span class="text-xs text-slate-500">คน</span>
           </div>
-          <div id="statAnsweredFriends" class="mt-1 text-[11px] text-emerald-400 font-medium">
+          <div id="statAnsweredFriends" class="mt-1 text-[11px] text-teal-600 font-semibold">
             ลงเวลาแล้ว 0/0 คน
           </div>
         </div>
 
-        <div class="p-4 rounded-2xl bg-slate-900/80 border border-slate-800/90 backdrop-blur flex flex-col justify-between cursor-pointer hover:border-orange-500/40 transition-colors" onclick="openSetupRangeModal(false)" title="คลิกเพื่อเปลี่ยนช่วงวันที่">
-          <div class="flex items-center justify-between text-slate-400 text-xs font-medium">
+        <div class="p-4 rounded-2xl bg-white/90 border border-cyan-100 shadow-sm shadow-cyan-900/5 flex flex-col justify-between cursor-pointer hover:border-cyan-300 transition-colors" onclick="openSetupRangeModal(false)" title="คลิกเพื่อเปลี่ยนช่วงวันที่">
+          <div class="flex items-center justify-between text-slate-500 text-xs font-semibold">
             <span>ตัวเลือกวันเที่ยว</span>
-            <i data-lucide="calendar-range" class="w-4 h-4 text-orange-400"></i>
+            <i data-lucide="calendar-range" class="w-4 h-4 text-sky-600"></i>
           </div>
           <div class="mt-2 flex items-baseline gap-1.5">
-            <span id="statTotalDates" class="text-2xl sm:text-3xl font-extrabold text-white">22</span>
-            <span class="text-xs text-slate-400">วัน</span>
+            <span id="statTotalDates" class="text-2xl sm:text-3xl font-extrabold text-slate-900">22</span>
+            <span class="text-xs text-slate-500">วัน</span>
           </div>
-          <div id="statHolidayCount" class="mt-1 text-[11px] text-orange-400 font-medium truncate">
+          <div id="statHolidayCount" class="mt-1 text-[11px] text-sky-600 font-semibold truncate">
             คลิกเพื่อปรับช่วงวันที่
           </div>
         </div>
 
-        <div class="col-span-2 p-4 rounded-2xl bg-gradient-to-br from-emerald-950/60 via-slate-900/90 to-slate-900/90 border border-emerald-500/30 backdrop-blur flex flex-col justify-between">
+        <div class="col-span-2 p-4 rounded-2xl bg-gradient-to-br from-cyan-500 to-sky-600 text-white shadow-md shadow-cyan-500/15 flex flex-col justify-between">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-semibold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
-              <i data-lucide="trophy" class="w-4 h-4"></i>
-              วันที่คนว่างตรงกันมากที่สุด
+            <span class="text-xs font-bold text-cyan-50 uppercase tracking-wider flex items-center gap-1.5">
+              <i data-lucide="sun" class="w-4 h-4 text-amber-200"></i>
+              วันที่เพื่อนว่างตรงกันมากที่สุด
             </span>
-            <span id="statBestCountBadge" class="px-2 py-0.5 text-xs font-bold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+            <span id="statBestCountBadge" class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-white/20 text-white backdrop-blur-sm">
               ว่าง 0 คน
             </span>
           </div>
-          <div id="statBestDatesText" class="mt-2 text-base sm:text-lg font-bold text-white truncate">
+          <div id="statBestDatesText" class="mt-2 text-base sm:text-lg font-extrabold text-white truncate">
             ยังไม่มีรายชื่อเพื่อน
           </div>
-          <div id="statReadyStatus" class="mt-1 text-xs text-slate-400 truncate">
-            กดปุ่ม "+ เพิ่มชื่อตัวเอง / เพื่อน" เพื่อเริ่มลงเวลาได้เลย
+          <div id="statReadyStatus" class="mt-1 text-xs text-cyan-50/90 truncate">
+            กดปุ่ม "+ เพิ่มชื่อเพื่อน" เพื่อเริ่มลงเวลาได้เลย
           </div>
         </div>
       </div>
 
       <!-- Appointment Info Card (5 cols) -->
-      <div class="lg:col-span-5 p-4 rounded-2xl bg-slate-900/80 border border-amber-500/25 backdrop-blur flex flex-col justify-between gap-2.5">
+      <div class="lg:col-span-5 p-4 rounded-2xl bg-white/90 border border-cyan-100 shadow-sm shadow-cyan-900/5 flex flex-col justify-between gap-2.5">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-orange-400"></span>
-            <h2 class="text-xs sm:text-sm font-bold text-amber-300">รายละเอียดการนัดหมาย</h2>
+            <span class="w-2.5 h-2.5 rounded-full bg-cyan-500"></span>
+            <h2 class="text-xs sm:text-sm font-bold text-slate-800">รายละเอียดการนัดหมาย</h2>
           </div>
-          <span id="lastSyncedTime" class="text-[11px] text-emerald-400 font-medium">พร้อมใช้งาน</span>
+          <span id="lastSyncedTime" class="text-[11px] text-teal-600 font-semibold">พร้อมใช้งาน</span>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
           <div>
-            <label class="block text-[11px] font-semibold text-amber-400/90 mb-1 flex items-center gap-1">
-              <i data-lucide="map-pin" class="w-3 h-3"></i> สถานที่นัดพบ / ทริป
+            <label class="block text-[11px] font-semibold text-slate-600 mb-1 flex items-center gap-1">
+              <i data-lucide="map-pin" class="w-3 h-3 text-cyan-600"></i> สถานที่นัดพบ / ทริป
             </label>
             <input id="meetupPlaceInput" type="text" placeholder="ระบุสถานที่นัดพบ..." 
-              class="w-full px-3 py-1.5 rounded-xl bg-slate-950/80 border border-slate-700/80 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-orange-500 transition-colors"
+              class="w-full px-3 py-1.5 rounded-xl bg-sky-50/60 border border-cyan-200/80 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-cyan-500 focus:bg-white transition-colors"
               oninput="saveMeetupInfo()" />
           </div>
           <div>
-            <label class="block text-[11px] font-semibold text-amber-400/90 mb-1 flex items-center gap-1">
-              <i data-lucide="clock" class="w-3 h-3"></i> เวลานัดพบ
+            <label class="block text-[11px] font-semibold text-slate-600 mb-1 flex items-center gap-1">
+              <i data-lucide="clock" class="w-3 h-3 text-cyan-600"></i> เวลานัดพบ
             </label>
             <input id="meetupTimeInput" type="text" placeholder="เช่น 08:00 น. / ล้อหมุน..." 
-              class="w-full px-3 py-1.5 rounded-xl bg-slate-950/80 border border-slate-700/80 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-orange-500 transition-colors"
+              class="w-full px-3 py-1.5 rounded-xl bg-sky-50/60 border border-cyan-200/80 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-cyan-500 focus:bg-white transition-colors"
               oninput="saveMeetupInfo()" />
           </div>
         </div>
@@ -239,16 +239,16 @@
     </div>
 
     <!-- Quick Filter & Paint Mode Toolbar -->
-    <div class="p-3.5 sm:px-5 rounded-2xl bg-slate-900/85 border border-slate-800/90 backdrop-blur flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3.5">
+    <div class="p-3.5 sm:px-5 rounded-2xl bg-white/90 border border-cyan-100 shadow-sm shadow-cyan-900/5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3.5">
       
       <!-- Left: Paint Brush / Click Mode -->
       <div class="flex items-center gap-2 flex-wrap">
-        <span class="text-xs font-semibold text-slate-400 mr-1 flex items-center gap-1.5">
-          <i data-lucide="mouse-pointer-click" class="w-4 h-4 text-orange-400"></i>
+        <span class="text-xs font-bold text-slate-600 mr-1 flex items-center gap-1.5">
+          <i data-lucide="mouse-pointer-click" class="w-4 h-4 text-cyan-600"></i>
           โหมดจิ้มตาราง:
         </span>
         <button id="modeBtn-cycle" onclick="setPaintMode('cycle')" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border">
-          🔄 สลับสถานะทีละขั้น
+          🔄 สลับทีละขั้น
         </button>
         <button id="modeBtn-free" onclick="setPaintMode('free')" class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border">
           ✅ ระบาย "ว่าง"
@@ -269,7 +269,7 @@
     </div>
 
     <!-- Main Interactive Spreadsheet Grid -->
-    <div class="rounded-2xl bg-slate-900/90 border border-slate-800 shadow-2xl overflow-hidden">
+    <div class="rounded-2xl bg-white border border-cyan-200/80 shadow-lg shadow-cyan-900/5 overflow-hidden">
       <div class="overflow-x-auto" id="tableScrollContainer">
         <table class="w-full border-collapse text-center select-none">
           <thead id="gridHead"></thead>
@@ -279,49 +279,45 @@
       </div>
 
       <!-- Legend Footer Bar -->
-      <div class="px-5 py-3.5 bg-slate-950/70 border-t border-slate-800/80 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs text-slate-400">
+      <div class="px-5 py-3.5 bg-sky-50/70 border-t border-cyan-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs text-slate-600">
         <div class="flex items-center gap-4 flex-wrap">
-          <span class="font-semibold text-slate-300">สัญลักษณ์ในตาราง:</span>
+          <span class="font-bold text-slate-700">สัญลักษณ์ในตาราง:</span>
           <span class="inline-flex items-center gap-1.5">
-            <span class="w-3.5 h-3.5 rounded bg-[#ff9900] inline-block shadow-sm"></span>
-            <span class="text-orange-300 font-medium">สีส้ม = วันหยุดพิเศษ</span>
+            <span class="w-3.5 h-3.5 rounded bg-amber-300 border border-amber-400 inline-block"></span>
+            <span class="text-amber-800 font-semibold">สีเหลืองทราย = วันหยุดพิเศษ</span>
           </span>
           <span class="inline-flex items-center gap-1.5">
-            <span class="w-3.5 h-3.5 rounded bg-[#11734b] border border-emerald-400/40 inline-block"></span>
-            <span class="text-emerald-300">ว่าง</span>
+            <span class="w-3.5 h-3.5 rounded bg-teal-500 inline-block"></span>
+            <span class="text-teal-700 font-semibold">ว่าง</span>
           </span>
           <span class="inline-flex items-center gap-1.5">
-            <span class="w-3.5 h-3.5 rounded bg-rose-700 border border-rose-400/40 inline-block"></span>
-            <span class="text-rose-300">ไม่ว่าง</span>
+            <span class="w-3.5 h-3.5 rounded bg-rose-400 inline-block"></span>
+            <span class="text-rose-700 font-semibold">ไม่ว่าง</span>
           </span>
           <span class="inline-flex items-center gap-1.5">
-            <span class="w-3.5 h-3.5 rounded bg-amber-600 border border-amber-400/40 inline-block"></span>
-            <span class="text-amber-300">อาจจะ / ไม่ชัวร์</span>
+            <span class="w-3.5 h-3.5 rounded bg-amber-400 inline-block"></span>
+            <span class="text-amber-700 font-semibold">อาจจะ / ไม่ชัวร์</span>
           </span>
           <span class="inline-flex items-center gap-1.5">
-            <span class="px-1.5 py-0.2 rounded bg-black text-white font-bold text-[10px] border border-slate-700">X</span>
-            <span>ยังว่างไม่ครบ</span>
-          </span>
-          <span class="inline-flex items-center gap-1.5">
-            <span class="px-1.5 py-0.2 rounded bg-emerald-500 text-slate-950 font-extrabold text-[10px]">✓ ครบแก๊ง!</span>
-            <span class="text-emerald-400 font-medium">ว่างตรงกันทุกคน</span>
+            <span class="px-1.5 py-0.2 rounded bg-teal-500 text-white font-extrabold text-[10px]">✓ ครบแก๊ง!</span>
+            <span class="text-teal-700 font-semibold">ว่างตรงกันทุกคน</span>
           </span>
         </div>
-        <div class="text-[11px] text-emerald-400/90 font-medium">
-          ⚡ Real-time Sync: ทุกคนที่เปิดลิงก์ห้องเดียวกันจะเห็นการแก้ไขของเพื่อนเด้งขึ้นมาทันที
+        <div class="text-[11px] text-cyan-700 font-semibold">
+          🌊 Real-time Sync: ทุกคนที่เปิดลิงก์ห้องเดียวกันจะเห็นการแก้ไขของเพื่อนเด้งขึ้นมาทันที
         </div>
       </div>
     </div>
 
     <!-- Best Dates / Consecutive Blocks Recommendations -->
-    <section class="p-5 rounded-2xl bg-slate-900/80 border border-slate-800/90 backdrop-blur">
+    <section class="p-5 rounded-2xl bg-white/90 border border-cyan-100 shadow-sm shadow-cyan-900/5">
       <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
         <div>
-          <h3 class="text-base font-bold text-white flex items-center gap-2">
-            <i data-lucide="sparkles" class="w-5 h-5 text-amber-400"></i>
+          <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <i data-lucide="sparkles" class="w-5 h-5 text-cyan-500"></i>
             จัดอันดับช่วงวันหยุดน่าไป (Top Recommended Dates)
           </h3>
-          <p class="text-xs text-slate-400">คำนวณสดจากช่วงวันที่เพื่อนกด "ว่าง" ตรงกันมากที่สุดและมีคนติดธุระน้อยที่สุด</p>
+          <p class="text-xs text-slate-500">คำนวณสดจากช่วงวันที่เพื่อนกด "ว่าง" ตรงกันมากที่สุดและมีคนติดธุระน้อยที่สุด</p>
         </div>
       </div>
       <div id="weekendRankingCards" class="grid grid-cols-1 md:grid-cols-3 gap-3.5"></div>
@@ -331,30 +327,30 @@
 
   <!-- Toast Notification -->
   <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
-    <div class="px-4 py-3 rounded-2xl bg-slate-800 border border-slate-700 shadow-2xl flex items-center gap-3 text-sm text-white">
-      <span id="toastIcon" class="text-emerald-400">✅</span>
+    <div class="px-4 py-3 rounded-2xl bg-slate-900 border border-cyan-500/30 shadow-xl flex items-center gap-3 text-sm text-white">
+      <span id="toastIcon" class="text-teal-400">🌊</span>
       <span id="toastMessage">บันทึกและซิงก์ให้เพื่อนทุกคนแล้ว</span>
     </div>
   </div>
 
   <!-- ========================================== -->
-  <!-- CUSTOM MODALS -->
+  <!-- CUSTOM MODALS (Bright Ocean & Beach Theme) -->
   <!-- ========================================== -->
 
   <!-- 0. First-time Setup / Visual Date Range Picker Modal -->
-  <div id="setupRangeModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/85 backdrop-blur-md p-3 sm:p-4 overflow-y-auto" onclick="if(event.target===this)closeSetupRangeModal()">
-    <div class="modal-card w-full max-w-2xl rounded-3xl bg-slate-900 border border-slate-700/80 shadow-2xl shadow-black/70 overflow-hidden my-auto">
-      <div class="px-5 sm:px-6 pt-5 pb-3.5 bg-gradient-to-b from-orange-500/15 to-transparent border-b border-slate-800/80 flex items-center justify-between">
+  <div id="setupRangeModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-sky-950/40 backdrop-blur-sm p-3 sm:p-4 overflow-y-auto" onclick="if(event.target===this)closeSetupRangeModal()">
+    <div class="modal-card w-full max-w-2xl rounded-3xl bg-white border border-cyan-100 shadow-2xl shadow-cyan-950/20 overflow-hidden my-auto">
+      <div class="px-5 sm:px-6 pt-5 pb-3.5 bg-gradient-to-r from-cyan-50 via-sky-50 to-teal-50 border-b border-cyan-100 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 text-white flex items-center justify-center shadow-lg shadow-orange-500/25 shrink-0">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-cyan-500 to-sky-600 text-white flex items-center justify-center shadow-md shadow-cyan-500/20 shrink-0">
             <i data-lucide="calendar-range" class="w-5 h-5"></i>
           </div>
           <div>
-            <h3 id="setupModalHeaderTitle" class="text-base sm:text-lg font-bold text-white">เลือกช่วงวันทริปของคุณ</h3>
-            <p class="text-xs text-slate-400">จิ้มเลือก <span class="text-orange-300 font-semibold">วันเริ่มต้น</span> และ <span class="text-orange-300 font-semibold">วันสิ้นสุด</span> บนปฏิทินได้เลย ไม่ต้องพิมพ์เอง</p>
+            <h3 id="setupModalHeaderTitle" class="text-base sm:text-lg font-bold text-slate-900">เลือกช่วงวันทริปของคุณ</h3>
+            <p class="text-xs text-slate-500">จิ้มเลือก <span class="text-cyan-600 font-semibold">วันเริ่มต้น</span> และ <span class="text-cyan-600 font-semibold">วันสิ้นสุด</span> บนปฏิทินได้เลย</p>
           </div>
         </div>
-        <button onclick="closeSetupRangeModal()" class="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
+        <button onclick="closeSetupRangeModal()" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-white/80 transition-colors">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
@@ -362,43 +358,43 @@
       <form onsubmit="submitSetupRangeModal(event)" class="p-5 sm:p-6 space-y-4">
         <!-- Trip Name -->
         <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1.5">ชื่อทริป / หัวข้อตาราง</label>
-          <input id="setupTripTitleInput" type="text" placeholder="เช่น ทริปเที่ยวส่งท้ายปี 2026" required
-            class="w-full px-4 py-2.5 rounded-2xl bg-slate-950 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all" />
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">ชื่อทริป / หัวข้อตาราง</label>
+          <input id="setupTripTitleInput" type="text" placeholder="เช่น ทริปทะเลส่งท้ายปี 2026" required
+            class="w-full px-4 py-2.5 rounded-2xl bg-sky-50/50 border border-cyan-200 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-cyan-500 focus:bg-white focus:ring-2 focus:ring-cyan-500/20 transition-all" />
         </div>
 
         <!-- Visual Calendar Range Picker Container -->
-        <div class="rounded-2xl bg-slate-950/90 border border-slate-800 p-4 space-y-3">
+        <div class="rounded-2xl bg-sky-50/60 border border-cyan-100 p-4 space-y-3">
           <!-- Selected Range Pill Display + Quick Presets -->
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-3 border-b border-slate-800/80">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-3 border-b border-cyan-100">
             <div class="flex items-center gap-2">
-              <div class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700/80 text-xs flex items-center gap-2">
-                <span class="text-slate-400">เริ่ม:</span>
-                <strong id="calStartBadge" class="text-orange-400 font-mono">23/10/2026</strong>
+              <div class="px-3 py-1.5 rounded-xl bg-white border border-cyan-200 text-xs flex items-center gap-2 shadow-sm">
+                <span class="text-slate-500">เริ่ม:</span>
+                <strong id="calStartBadge" class="text-cyan-700 font-mono">23/10/2026</strong>
               </div>
-              <span class="text-slate-500">→</span>
-              <div class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700/80 text-xs flex items-center gap-2">
-                <span class="text-slate-400">ถึง:</span>
-                <strong id="calEndBadge" class="text-amber-300 font-mono">27/12/2026</strong>
+              <span class="text-cyan-500 font-bold">→</span>
+              <div class="px-3 py-1.5 rounded-xl bg-white border border-cyan-200 text-xs flex items-center gap-2 shadow-sm">
+                <span class="text-slate-500">ถึง:</span>
+                <strong id="calEndBadge" class="text-teal-700 font-mono">27/12/2026</strong>
               </div>
             </div>
             <div class="flex items-center gap-1.5 flex-wrap">
-              <button type="button" onclick="applyQuickRangePreset('this_month')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-medium text-slate-300 transition-colors">เดือนนี้</button>
-              <button type="button" onclick="applyQuickRangePreset('next_30')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-medium text-slate-300 transition-colors">30 วันข้างหน้า</button>
-              <button type="button" onclick="applyQuickRangePreset('oct_dec_2026')" class="px-2.5 py-1 rounded-lg bg-orange-500/15 hover:bg-orange-500/25 border border-orange-500/30 text-[11px] font-semibold text-orange-300 transition-colors">ต.ค.–ธ.ค. 2026</button>
+              <button type="button" onclick="applyQuickRangePreset('this_month')" class="px-2.5 py-1 rounded-lg bg-white hover:bg-cyan-50 border border-cyan-200 text-[11px] font-semibold text-slate-600 transition-colors">เดือนนี้</button>
+              <button type="button" onclick="applyQuickRangePreset('next_30')" class="px-2.5 py-1 rounded-lg bg-white hover:bg-cyan-50 border border-cyan-200 text-[11px] font-semibold text-slate-600 transition-colors">30 วันข้างหน้า</button>
+              <button type="button" onclick="applyQuickRangePreset('oct_dec_2026')" class="px-2.5 py-1 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-300 text-[11px] font-bold text-cyan-700 transition-colors">ต.ค.–ธ.ค. 2026</button>
             </div>
           </div>
 
           <!-- Month Navigation Header -->
           <div class="flex items-center justify-between">
-            <button type="button" onclick="shiftCalendarMonth(-1)" class="p-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 transition-colors flex items-center gap-1 text-xs font-medium px-2.5">
+            <button type="button" onclick="shiftCalendarMonth(-1)" class="p-1.5 rounded-xl bg-white hover:bg-cyan-50 border border-cyan-200 text-slate-700 transition-colors flex items-center gap-1 text-xs font-semibold px-2.5 shadow-sm">
               <i data-lucide="chevron-left" class="w-4 h-4"></i>
               <span>เดือนก่อน</span>
             </button>
-            <div id="calInstructionBadge" class="text-xs font-semibold text-orange-300">
+            <div id="calInstructionBadge" class="text-xs font-bold text-cyan-700">
               👆 คลิกเลือกวันเริ่มต้นและวันสิ้นสุดบนปฏิทิน
             </div>
-            <button type="button" onclick="shiftCalendarMonth(1)" class="p-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 transition-colors flex items-center gap-1 text-xs font-medium px-2.5">
+            <button type="button" onclick="shiftCalendarMonth(1)" class="p-1.5 rounded-xl bg-white hover:bg-cyan-50 border border-cyan-200 text-slate-700 transition-colors flex items-center gap-1 text-xs font-semibold px-2.5 shadow-sm">
               <span>เดือนถัดไป</span>
               <i data-lucide="chevron-right" class="w-4 h-4"></i>
             </button>
@@ -410,7 +406,7 @@
 
         <!-- Day Filter Mode -->
         <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-2">รูปแบบวันที่ต้องการนำมาสร้างในตาราง</label>
+          <label class="block text-xs font-bold text-slate-700 mb-2">รูปแบบวันที่ต้องการนำมาสร้างในตาราง</label>
           <div class="grid grid-cols-3 gap-2">
             <button type="button" onclick="selectRangeDayFilter('all')" id="rangeFilterBtn-all"
               class="px-3 py-2 rounded-xl border text-xs font-semibold flex flex-col items-center gap-0.5 transition-all">
@@ -431,28 +427,28 @@
         </div>
 
         <!-- Live Preview Box -->
-        <div class="p-3 rounded-2xl bg-slate-950/90 border border-slate-800 flex items-center justify-between gap-3">
+        <div class="p-3 rounded-2xl bg-cyan-50/70 border border-cyan-200 flex items-center justify-between gap-3">
           <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-xl bg-orange-500/15 text-orange-400 flex items-center justify-center shrink-0">
+            <div class="w-8 h-8 rounded-xl bg-cyan-500 text-white flex items-center justify-center shrink-0">
               <i data-lucide="calendar-check" class="w-4 h-4"></i>
             </div>
             <div>
-              <div id="setupRangeSummaryText" class="text-xs font-bold text-slate-200">ช่วงวันที่: 23/10/2026 - 27/12/2026</div>
-              <div id="setupRangeSubText" class="text-[11px] text-slate-400">ไฮไลท์สีส้มวันหยุดนักขัตฤกษ์ให้อัตโนมัติ</div>
+              <div id="setupRangeSummaryText" class="text-xs font-bold text-slate-800">ช่วงวันที่: 23/10/2026 - 27/12/2026</div>
+              <div id="setupRangeSubText" class="text-[11px] text-slate-500">ไฮไลท์วันหยุดนักขัตฤกษ์ให้อัตโนมัติ</div>
             </div>
           </div>
-          <span id="setupRangeCountBadge" class="px-2.5 py-1 rounded-xl bg-orange-500/20 border border-orange-500/30 text-orange-300 font-extrabold text-xs shrink-0">
+          <span id="setupRangeCountBadge" class="px-3 py-1 rounded-xl bg-cyan-600 text-white font-extrabold text-xs shrink-0 shadow-sm">
             22 วัน
           </span>
         </div>
 
-        <p id="setupRangeError" class="hidden text-xs text-rose-400 font-medium"></p>
+        <p id="setupRangeError" class="hidden text-xs text-rose-600 font-semibold"></p>
 
         <div class="pt-1 flex items-center justify-end gap-2.5">
-          <button type="button" onclick="closeSetupRangeModal()" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors">
+          <button type="button" onclick="closeSetupRangeModal()" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">
             ปิด
           </button>
-          <button type="submit" class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-lg shadow-orange-500/25 transition-all flex items-center gap-1.5">
+          <button type="submit" class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-gradient-to-r from-cyan-500 to-sky-600 hover:from-cyan-600 hover:to-sky-700 text-white shadow-lg shadow-cyan-500/25 transition-all flex items-center gap-1.5">
             <i data-lucide="sparkles" class="w-4 h-4"></i>
             <span id="setupSubmitBtnText">สร้างตารางตามช่วงวันนี้</span>
           </button>
@@ -462,52 +458,51 @@
   </div>
 
   <!-- 1. Add Multiple Friends Modal -->
-  <div id="addFriendModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/80 backdrop-blur-md p-4 overflow-y-auto" onclick="if(event.target===this)closeAddFriendModal()">
-    <div class="modal-card w-full max-w-md rounded-3xl bg-slate-900 border border-slate-700/80 shadow-2xl shadow-black/60 overflow-hidden my-auto">
-      <div class="px-6 pt-6 pb-4 bg-gradient-to-b from-sky-500/10 to-transparent border-b border-slate-800/80 flex items-center justify-between">
+  <div id="addFriendModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-sky-950/40 backdrop-blur-sm p-4 overflow-y-auto" onclick="if(event.target===this)closeAddFriendModal()">
+    <div class="modal-card w-full max-w-md rounded-3xl bg-white border border-cyan-100 shadow-2xl shadow-cyan-950/20 overflow-hidden my-auto">
+      <div class="px-6 pt-6 pb-4 bg-gradient-to-r from-cyan-50 via-sky-50 to-teal-50 border-b border-cyan-100 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-2xl bg-sky-500/20 border border-sky-500/30 text-sky-400 flex items-center justify-center">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-cyan-500 to-sky-600 text-white flex items-center justify-center shadow-md shadow-cyan-500/20">
             <i data-lucide="users" class="w-5 h-5"></i>
           </div>
           <div>
-            <h3 class="text-base sm:text-lg font-bold text-white">เพิ่มรายชื่อเพื่อนเข้าตาราง</h3>
-            <p class="text-xs text-slate-400">เพิ่มทีละคน หรือเพิ่มเพื่อนหลายๆ คนพร้อมกันในครั้งเดียวได้เลย</p>
+            <h3 class="text-base sm:text-lg font-bold text-slate-900">เพิ่มรายชื่อเพื่อนเข้าตาราง</h3>
+            <p class="text-xs text-slate-500">เพิ่มทีละคน หรือเพิ่มเพื่อนหลายๆ คนพร้อมกันในครั้งเดียวได้เลย</p>
           </div>
         </div>
-        <button onclick="closeAddFriendModal()" class="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
+        <button onclick="closeAddFriendModal()" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-white/80 transition-colors">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
       <form onsubmit="submitAddFriendModal(event)" class="p-6 space-y-4">
-        <!-- Input + Add Button + Tag Chips -->
         <div>
           <div class="flex items-center justify-between mb-1.5">
-            <label class="text-xs font-semibold text-slate-300">
-              พิมพ์ชื่อเพื่อน (กด <kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-sky-300 text-[10px]">Enter</kbd> หรือ <kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-sky-300 text-[10px]">,</kbd> หรือวางหลายบรรทัด)
+            <label class="text-xs font-bold text-slate-700">
+              พิมพ์ชื่อเพื่อน (กด <kbd class="px-1.5 py-0.5 rounded bg-sky-100 border border-sky-200 text-cyan-800 text-[10px]">Enter</kbd> หรือ <kbd class="px-1.5 py-0.5 rounded bg-sky-100 border border-sky-200 text-cyan-800 text-[10px]">,</kbd> หรือวางหลายบรรทัด)
             </label>
-            <span id="pendingFriendCountBadge" class="text-[11px] font-bold text-sky-400">รอเพิ่ม 0 คน</span>
+            <span id="pendingFriendCountBadge" class="text-[11px] font-bold text-cyan-600">รอเพิ่ม 0 คน</span>
           </div>
 
           <div class="flex gap-2">
             <textarea id="addFriendNameInput" rows="2" placeholder="พิมพ์ชื่อ เช่น ป็อบ, บอย หรือวางรายชื่อหลายบรรทัด..."
               onkeydown="handleAddFriendInputKeydown(event)"
               oninput="handleAddFriendInputChange()"
-              class="flex-1 px-3.5 py-2.5 rounded-2xl bg-slate-950 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all resize-none"></textarea>
-            <button type="button" onclick="addTypedFriendsToQueue()" class="px-3.5 rounded-2xl bg-sky-500/20 hover:bg-sky-500/30 border border-sky-500/40 text-sky-300 text-xs font-bold shrink-0 transition-all flex flex-col items-center justify-center gap-0.5">
+              class="flex-1 px-3.5 py-2.5 rounded-2xl bg-sky-50/50 border border-cyan-200 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-cyan-500 focus:bg-white focus:ring-2 focus:ring-cyan-500/20 transition-all resize-none"></textarea>
+            <button type="button" onclick="addTypedFriendsToQueue()" class="px-3.5 rounded-2xl bg-cyan-50 hover:bg-cyan-100 border border-cyan-200 text-cyan-700 text-xs font-bold shrink-0 transition-all flex flex-col items-center justify-center gap-0.5">
               <i data-lucide="plus" class="w-4 h-4"></i>
               <span>เพิ่มในคิว</span>
             </button>
           </div>
 
           <!-- Queued Friend Chips -->
-          <div id="pendingFriendsChipsContainer" class="mt-2.5 min-h-[44px] max-h-36 overflow-y-auto p-2.5 rounded-2xl bg-slate-950/80 border border-slate-800/90 flex flex-wrap gap-1.5 items-center"></div>
+          <div id="pendingFriendsChipsContainer" class="mt-2.5 min-h-[44px] max-h-36 overflow-y-auto p-2.5 rounded-2xl bg-sky-50/60 border border-cyan-100 flex flex-wrap gap-1.5 items-center"></div>
 
-          <p id="addFriendError" class="hidden text-xs text-rose-400 mt-1.5 font-medium"></p>
+          <p id="addFriendError" class="hidden text-xs text-rose-600 mt-1.5 font-semibold"></p>
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-2">ตั้งค่าสถานะเริ่มต้นให้เพื่อนที่เพิ่มรอบนี้</label>
+          <label class="block text-xs font-bold text-slate-700 mb-2">ตั้งค่าสถานะเริ่มต้นให้เพื่อนที่เพิ่มรอบนี้</label>
           <div class="grid grid-cols-3 gap-2">
             <button type="button" onclick="selectNewFriendPreset('empty')" id="presetBtn-empty"
               class="px-3 py-2.5 rounded-xl border text-xs font-semibold flex flex-col items-center gap-1 transition-all">
@@ -522,20 +517,20 @@
             <button type="button" onclick="selectNewFriendPreset('holiday_free')" id="presetBtn-holiday_free"
               class="px-3 py-2.5 rounded-xl border text-xs font-semibold flex flex-col items-center gap-1 transition-all">
               <span>🏖️ เฉพาะวันหยุด</span>
-              <span class="text-[10px] opacity-75">ว่างวันหยุดสีส้ม</span>
+              <span class="text-[10px] opacity-75">ว่างวันหยุดพิเศษ</span>
             </button>
           </div>
         </div>
 
         <div class="pt-2 flex items-center justify-between gap-2.5">
-          <button type="button" onclick="clearPendingFriendsQueue()" class="text-xs text-slate-400 hover:text-rose-400 transition-colors">
+          <button type="button" onclick="clearPendingFriendsQueue()" class="text-xs font-semibold text-slate-400 hover:text-rose-500 transition-colors">
             ล้างคิวรายชื่อ
           </button>
           <div class="flex items-center gap-2">
-            <button type="button" onclick="closeAddFriendModal()" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors">
+            <button type="button" onclick="closeAddFriendModal()" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">
               ยกเลิก
             </button>
-            <button type="submit" class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white shadow-lg shadow-sky-500/25 transition-all flex items-center gap-1.5">
+            <button type="submit" class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-gradient-to-r from-cyan-500 to-sky-600 hover:from-cyan-600 hover:to-sky-700 text-white shadow-lg shadow-cyan-500/25 transition-all flex items-center gap-1.5">
               <i data-lucide="user-plus" class="w-4 h-4"></i>
               <span id="submitAddFriendsBtnText">บันทึกเข้าตาราง</span>
             </button>
@@ -546,47 +541,47 @@
   </div>
 
   <!-- 2. Add Single Date Modal -->
-  <div id="addDateModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/80 backdrop-blur-md p-4" onclick="if(event.target===this)closeAddDateModal()">
-    <div class="modal-card w-full max-w-md rounded-3xl bg-slate-900 border border-slate-700/80 shadow-2xl shadow-black/60 overflow-hidden">
-      <div class="px-6 pt-6 pb-4 bg-gradient-to-b from-orange-500/10 to-transparent border-b border-slate-800/80 flex items-center justify-between">
+  <div id="addDateModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-sky-950/40 backdrop-blur-sm p-4" onclick="if(event.target===this)closeAddDateModal()">
+    <div class="modal-card w-full max-w-md rounded-3xl bg-white border border-cyan-100 shadow-2xl shadow-cyan-950/20 overflow-hidden">
+      <div class="px-6 pt-6 pb-4 bg-gradient-to-r from-cyan-50 via-sky-50 to-teal-50 border-b border-cyan-100 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-2xl bg-orange-500/20 border border-orange-500/30 text-orange-400 flex items-center justify-center">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-cyan-500 to-sky-600 text-white flex items-center justify-center shadow-md shadow-cyan-500/20">
             <i data-lucide="calendar-plus" class="w-5 h-5"></i>
           </div>
           <div>
-            <h3 class="text-base sm:text-lg font-bold text-white">เพิ่มตัวเลือกวันเที่ยว</h3>
-            <p class="text-xs text-slate-400">เลือกวันที่ต้องการเพิ่มเข้าตารางเช็ควันว่าง</p>
+            <h3 class="text-base sm:text-lg font-bold text-slate-900">เพิ่มตัวเลือกวันเที่ยว</h3>
+            <p class="text-xs text-slate-500">เลือกวันที่ต้องการเพิ่มเข้าตารางเช็ควันว่าง</p>
           </div>
         </div>
-        <button onclick="closeAddDateModal()" class="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
+        <button onclick="closeAddDateModal()" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-white/80 transition-colors">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
       <form onsubmit="submitAddDateModal(event)" class="p-6 space-y-5">
         <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-2">เลือกวันที่จากปฏิทิน</label>
+          <label class="block text-xs font-bold text-slate-700 mb-2">เลือกวันที่จากปฏิทิน</label>
           <input id="addDatePickerInput" type="date" value="2026-12-28" required
-            class="w-full px-4 py-3 rounded-2xl bg-slate-950 border border-slate-700 text-sm text-white focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all" />
-          <p id="addDateError" class="hidden text-xs text-rose-400 mt-1.5 font-medium"></p>
+            class="w-full px-4 py-3 rounded-2xl bg-sky-50/50 border border-cyan-200 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 focus:bg-white focus:ring-2 focus:ring-cyan-500/20 transition-all" />
+          <p id="addDateError" class="hidden text-xs text-rose-600 mt-1.5 font-semibold"></p>
         </div>
 
-        <label class="flex items-center justify-between p-3.5 rounded-2xl bg-slate-950/90 border border-slate-800 cursor-pointer hover:border-orange-500/40 transition-colors">
+        <label class="flex items-center justify-between p-3.5 rounded-2xl bg-amber-50/70 border border-amber-200 cursor-pointer hover:border-amber-400 transition-colors">
           <div class="flex items-center gap-3">
-            <span class="w-4 h-4 rounded bg-[#ff9900] inline-block shadow-sm"></span>
+            <span class="w-4 h-4 rounded bg-amber-300 border border-amber-400 inline-block"></span>
             <div>
-              <div class="text-xs sm:text-sm font-semibold text-slate-200">ไฮไลท์สีส้ม (วันหยุดพิเศษ / นักขัตฤกษ์)</div>
-              <div class="text-[11px] text-slate-400">แสดงแถบสีส้มเหมือนวันหยุดใน Google Sheet</div>
+              <div class="text-xs sm:text-sm font-bold text-slate-800">ไฮไลท์วันหยุดพิเศษ / นักขัตฤกษ์</div>
+              <div class="text-[11px] text-slate-500">แสดงแถบสีเหลืองทรายให้เพื่อนเห็นชัดๆ</div>
             </div>
           </div>
-          <input id="addDateHolidayCheck" type="checkbox" class="w-4 h-4 accent-orange-500 rounded cursor-pointer" />
+          <input id="addDateHolidayCheck" type="checkbox" class="w-4 h-4 accent-cyan-600 rounded cursor-pointer" />
         </label>
 
         <div class="pt-2 flex items-center justify-end gap-2.5">
-          <button type="button" onclick="closeAddDateModal()" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors">
+          <button type="button" onclick="closeAddDateModal()" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">
             ยกเลิก
           </button>
-          <button type="submit" class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-lg shadow-orange-500/25 transition-all flex items-center gap-1.5">
+          <button type="submit" class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-gradient-to-r from-cyan-500 to-sky-600 hover:from-cyan-600 hover:to-sky-700 text-white shadow-lg shadow-cyan-500/25 transition-all flex items-center gap-1.5">
             <i data-lucide="plus" class="w-4 h-4"></i>
             <span>เพิ่มวันที่</span>
           </button>
@@ -596,35 +591,35 @@
   </div>
 
   <!-- 3. Edit Trip Title Modal -->
-  <div id="editTitleModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/80 backdrop-blur-md p-4" onclick="if(event.target===this)closeEditTitleModal()">
-    <div class="modal-card w-full max-w-md rounded-3xl bg-slate-900 border border-slate-700/80 shadow-2xl shadow-black/60 overflow-hidden">
-      <div class="px-6 pt-6 pb-4 bg-gradient-to-b from-amber-500/10 to-transparent border-b border-slate-800/80 flex items-center justify-between">
+  <div id="editTitleModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-sky-950/40 backdrop-blur-sm p-4" onclick="if(event.target===this)closeEditTitleModal()">
+    <div class="modal-card w-full max-w-md rounded-3xl bg-white border border-cyan-100 shadow-2xl shadow-cyan-950/20 overflow-hidden">
+      <div class="px-6 pt-6 pb-4 bg-gradient-to-r from-cyan-50 via-sky-50 to-teal-50 border-b border-cyan-100 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-2xl bg-amber-500/20 border border-amber-500/30 text-amber-400 flex items-center justify-center">
-            <i data-lucide="compass" class="w-5 h-5"></i>
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-cyan-500 to-sky-600 text-white flex items-center justify-center shadow-md shadow-cyan-500/20">
+            <i data-lucide="palmtree" class="w-5 h-5"></i>
           </div>
           <div>
-            <h3 class="text-base sm:text-lg font-bold text-white">เปลี่ยนชื่อทริป</h3>
-            <p class="text-xs text-slate-400">ตั้งชื่อทริปให้เพื่อนๆ รู้ว่าจะไปเที่ยวไหนกัน</p>
+            <h3 class="text-base sm:text-lg font-bold text-slate-900">เปลี่ยนชื่อทริป</h3>
+            <p class="text-xs text-slate-500">ตั้งชื่อทริปให้เพื่อนๆ รู้ว่าจะไปเที่ยวไหนกัน</p>
           </div>
         </div>
-        <button onclick="closeEditTitleModal()" class="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
+        <button onclick="closeEditTitleModal()" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-white/80 transition-colors">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
       <form onsubmit="submitEditTitleModal(event)" class="p-6 space-y-5">
         <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-2">ชื่อทริป / หัวข้อตาราง</label>
-          <input id="editTitleInput" type="text" placeholder="เช่น ทริปเขาใหญ่ส่งท้ายปี 2026" required
-            class="w-full px-4 py-3 rounded-2xl bg-slate-950 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all" />
+          <label class="block text-xs font-bold text-slate-700 mb-2">ชื่อทริป / หัวข้อตาราง</label>
+          <input id="editTitleInput" type="text" placeholder="เช่น ทริปทะเลเกาะกูด 2026" required
+            class="w-full px-4 py-3 rounded-2xl bg-sky-50/50 border border-cyan-200 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-cyan-500 focus:bg-white focus:ring-2 focus:ring-cyan-500/20 transition-all" />
         </div>
 
         <div class="pt-2 flex items-center justify-end gap-2.5">
-          <button type="button" onclick="closeEditTitleModal()" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors">
+          <button type="button" onclick="closeEditTitleModal()" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors">
             ยกเลิก
           </button>
-          <button type="submit" class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-lg shadow-orange-500/25 transition-all">
+          <button type="submit" class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-gradient-to-r from-cyan-500 to-sky-600 hover:from-cyan-600 hover:to-sky-700 text-white shadow-lg shadow-cyan-500/25 transition-all">
             บันทึกชื่อทริป
           </button>
         </div>
@@ -633,58 +628,58 @@
   </div>
 
   <!-- 4. Manage Existing Friend Row Modal -->
-  <div id="friendModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/80 backdrop-blur-md p-4" onclick="if(event.target===this)closeFriendModal()">
-    <div class="modal-card w-full max-w-md rounded-3xl bg-slate-900 border border-slate-700/80 shadow-2xl shadow-black/60 overflow-hidden">
-      <div class="px-6 pt-6 pb-4 bg-gradient-to-b from-emerald-500/10 to-transparent border-b border-slate-800/80 flex items-center justify-between">
+  <div id="friendModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-sky-950/40 backdrop-blur-sm p-4" onclick="if(event.target===this)closeFriendModal()">
+    <div class="modal-card w-full max-w-md rounded-3xl bg-white border border-cyan-100 shadow-2xl shadow-cyan-950/20 overflow-hidden">
+      <div class="px-6 pt-6 pb-4 bg-gradient-to-r from-cyan-50 via-sky-50 to-teal-50 border-b border-cyan-100 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 flex items-center justify-center">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-500 text-white flex items-center justify-center shadow-md shadow-teal-500/20">
             <i data-lucide="user-check" class="w-5 h-5"></i>
           </div>
           <div>
-            <h3 id="friendModalTitle" class="text-base sm:text-lg font-bold text-white">จัดการเวลาของเพื่อน</h3>
-            <p class="text-xs text-slate-400">เหมาตั้งค่าทั้งแถวในคลิกเดียว (ซิงก์ให้ทุกคนเห็นทันที)</p>
+            <h3 id="friendModalTitle" class="text-base sm:text-lg font-bold text-slate-900">จัดการเวลาของเพื่อน</h3>
+            <p class="text-xs text-slate-500">เหมาตั้งค่าทั้งแถวในคลิกเดียว (ซิงก์ให้ทุกคนเห็นทันที)</p>
           </div>
         </div>
-        <button onclick="closeFriendModal()" class="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800">
+        <button onclick="closeFriendModal()" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-white/80">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
       <div class="p-6 space-y-5">
         <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-2">แก้ไขชื่อเพื่อน</label>
+          <label class="block text-xs font-bold text-slate-700 mb-2">แก้ไขชื่อเพื่อน</label>
           <input id="friendModalNameInput" type="text"
-            class="w-full px-4 py-2.5 rounded-2xl bg-slate-950 border border-slate-700 text-sm text-white focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all" />
+            class="w-full px-4 py-2.5 rounded-2xl bg-sky-50/50 border border-cyan-200 text-sm text-slate-900 focus:outline-none focus:border-cyan-500 focus:bg-white focus:ring-2 focus:ring-cyan-500/20 transition-all" />
         </div>
 
         <div class="space-y-2.5">
-          <span class="block text-xs font-semibold text-slate-300">เหมาตั้งค่าทุกวันในแถวนี้เป็น:</span>
+          <span class="block text-xs font-bold text-slate-700">เหมาตั้งค่าทุกวันในแถวนี้เป็น:</span>
           <div class="grid grid-cols-2 gap-2.5">
-            <button onclick="bulkSetFriendStatus('free')" class="px-3 py-3 rounded-2xl bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 text-xs font-bold flex items-center justify-center gap-1.5 transition-all">
+            <button onclick="bulkSetFriendStatus('free')" class="px-3 py-3 rounded-2xl bg-teal-50 hover:bg-teal-100 border border-teal-200 text-teal-800 text-xs font-bold flex items-center justify-center gap-1.5 transition-all">
               ✅ ว่างทุกวัน
             </button>
-            <button onclick="bulkSetFriendStatus('busy')" class="px-3 py-3 rounded-2xl bg-rose-600/20 hover:bg-rose-600/30 border border-rose-500/40 text-rose-300 text-xs font-bold flex items-center justify-center gap-1.5 transition-all">
+            <button onclick="bulkSetFriendStatus('busy')" class="px-3 py-3 rounded-2xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 text-xs font-bold flex items-center justify-center gap-1.5 transition-all">
               ❌ ไม่ว่างทุกวัน
             </button>
-            <button onclick="bulkSetFriendStatus('holiday_free')" class="px-3 py-3 rounded-2xl bg-orange-500/20 hover:bg-orange-500/30 border border-orange-500/40 text-orange-300 text-xs font-bold flex items-center justify-center gap-1.5 transition-all">
+            <button onclick="bulkSetFriendStatus('holiday_free')" class="px-3 py-3 rounded-2xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 text-xs font-bold flex items-center justify-center gap-1.5 transition-all">
               🏖️ ว่างเฉพาะวันหยุด
             </button>
-            <button onclick="bulkSetFriendStatus('empty')" class="px-3 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-300 text-xs font-bold flex items-center justify-center gap-1.5 transition-all">
+            <button onclick="bulkSetFriendStatus('empty')" class="px-3 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 text-xs font-bold flex items-center justify-center gap-1.5 transition-all">
               ⬜ ล้างข้อมูลแถวนี้
             </button>
           </div>
         </div>
 
-        <div class="pt-3 border-t border-slate-800 flex items-center justify-between">
-          <button onclick="deleteCurrentFriend()" class="px-3.5 py-2 rounded-xl text-xs font-semibold text-rose-400 hover:bg-rose-500/15 transition-colors flex items-center gap-1.5">
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+          <button onclick="deleteCurrentFriend()" class="px-3.5 py-2 rounded-xl text-xs font-bold text-rose-600 hover:bg-rose-50 transition-colors flex items-center gap-1.5">
             <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
             <span>ลบรายชื่อนี้</span>
           </button>
           <div class="flex items-center gap-2">
-            <button onclick="closeFriendModal()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">
+            <button onclick="closeFriendModal()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200">
               ปิด
             </button>
-            <button onclick="saveFriendModalName()" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950 hover:bg-emerald-400">
+            <button onclick="saveFriendModalName()" class="px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-500 to-sky-600 text-white hover:from-cyan-600 hover:to-sky-700 shadow-sm">
               บันทึกชื่อ
             </button>
           </div>
@@ -694,20 +689,20 @@
   </div>
 
   <!-- 5. Confirm Clear All Friends Modal -->
-  <div id="confirmClearModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/80 backdrop-blur-md p-4" onclick="if(event.target===this)closeConfirmClearAllModal()">
-    <div class="modal-card w-full max-w-sm rounded-3xl bg-slate-900 border border-rose-500/30 shadow-2xl shadow-black/60 p-6 space-y-4 text-center">
-      <div class="w-12 h-12 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-400 flex items-center justify-center mx-auto">
+  <div id="confirmClearModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-sky-950/40 backdrop-blur-sm p-4" onclick="if(event.target===this)closeConfirmClearAllModal()">
+    <div class="modal-card w-full max-w-sm rounded-3xl bg-white border border-rose-200 shadow-2xl p-6 space-y-4 text-center">
+      <div class="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-200 text-rose-500 flex items-center justify-center mx-auto">
         <i data-lucide="alert-triangle" class="w-6 h-6"></i>
       </div>
       <div>
-        <h3 class="text-base font-bold text-white">ลบรายชื่อทั้งหมดในห้องนี้?</h3>
-        <p class="text-xs text-slate-400 mt-1">ข้อมูลรายชื่อเพื่อนและวันว่างในห้องนี้จะถูกล้างเป็นตารางว่างเปล่าทั้งหมด</p>
+        <h3 class="text-base font-bold text-slate-900">ลบรายชื่อทั้งหมดในห้องนี้?</h3>
+        <p class="text-xs text-slate-500 mt-1">ข้อมูลรายชื่อเพื่อนและวันว่างในห้องนี้จะถูกล้างเป็นตารางว่างเปล่าทั้งหมด</p>
       </div>
       <div class="flex items-center justify-center gap-2.5 pt-2">
-        <button onclick="closeConfirmClearAllModal()" class="flex-1 py-2.5 rounded-xl text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700">
+        <button onclick="closeConfirmClearAllModal()" class="flex-1 py-2.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200">
           ยกเลิก
         </button>
-        <button onclick="confirmClearAllFriends()" class="flex-1 py-2.5 rounded-xl text-xs font-bold bg-rose-600 text-white hover:bg-rose-500 shadow-lg shadow-rose-600/25">
+        <button onclick="confirmClearAllFriends()" class="flex-1 py-2.5 rounded-xl text-xs font-bold bg-rose-500 text-white hover:bg-rose-600 shadow-lg shadow-rose-500/25">
           ยืนยันลบทั้งหมด
         </button>
       </div>
@@ -720,7 +715,6 @@
     // ==========================================
     const CLIENT_ID = 'c_' + Math.random().toString(36).slice(2, 10);
 
-    // Known Thai Public Holidays (DD/MM/YYYY) for automatic orange highlight
     const THAI_HOLIDAYS = new Set([
       '01/01/2026', '02/01/2026', '03/03/2026', '06/04/2026',
       '13/04/2026', '14/04/2026', '15/04/2026', '01/05/2026',
@@ -814,7 +808,7 @@
     let dragPaintValue = null;
     let activeFriendIndex = null;
     let newFriendPreset = 'empty';
-    let rangeDayFilter = 'weekends_holidays'; // 'all' | 'weekends_holidays' | 'fri_to_sun'
+    let rangeDayFilter = 'weekends_holidays';
     let publishTimer = null;
     let eventSource = null;
 
@@ -851,11 +845,10 @@
       const results = [];
       const cur = new Date(start.getTime());
 
-      // Cap at 180 days max to keep table fast
       let guard = 0;
       while (cur <= end && guard < 180) {
         guard++;
-        const dayIndex = cur.getDay(); // 0 Sun .. 6 Sat
+        const dayIndex = cur.getDay();
         const id = formatDDMMYYYY(cur);
         const isPublicHol = THAI_HOLIDAYS.has(id);
 
@@ -914,18 +907,18 @@
       const btnText = document.getElementById('shareRoomBtnText');
 
       if (!currentRoomId) {
-        badge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-semibold rounded-full bg-slate-800 text-slate-300 border border-slate-700';
-        dot.className = 'w-2 h-2 rounded-full bg-slate-400';
-        text.textContent = 'ตารางใหม่ (กำหนดช่วงวันที่ หรือกด +เพิ่มชื่อเพื่อสร้างห้องได้เลย)';
+        badge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-semibold rounded-full bg-sky-50 text-sky-700 border border-sky-200';
+        dot.className = 'w-2 h-2 rounded-full bg-sky-400';
+        text.textContent = 'ตารางใหม่ (กำหนดช่วงวัน หรือกด +เพิ่มชื่อเพื่อนได้เลย)';
         if (btnText) btnText.textContent = 'สร้างลิงก์แชร์ Real-time';
       } else if (isConnected) {
-        badge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-semibold rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30';
-        dot.className = 'w-2 h-2 rounded-full bg-emerald-400 live-dot';
+        badge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-semibold rounded-full bg-teal-50 text-teal-700 border border-teal-200';
+        dot.className = 'w-2 h-2 rounded-full bg-teal-500 live-dot';
         text.textContent = `ห้อง Real-time (#${currentRoomId}) • อัปเดตสดทุกคน`;
         if (btnText) btnText.textContent = 'คัดลอกลิงก์ห้อง Real-time';
       } else {
-        badge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-semibold rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30';
-        dot.className = 'w-2 h-2 rounded-full bg-amber-400 live-dot';
+        badge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 text-xs font-semibold rounded-full bg-amber-50 text-amber-700 border border-amber-200';
+        dot.className = 'w-2 h-2 rounded-full bg-amber-500 live-dot';
         text.textContent = `กำลังเชื่อมต่อห้อง #${currentRoomId}...`;
       }
     }
@@ -979,7 +972,7 @@
         if (lsKey) localStorage.setItem(lsKey, JSON.stringify(state));
 
         renderAll();
-        updateTimestampBadge('อัปเดตสดจากเพื่อนเมื่อสักครู่ ⚡');
+        updateTimestampBadge('อัปเดตสดจากเพื่อนเมื่อสักครู่ 🌊');
         return true;
       } catch (e) {
         return false;
@@ -1051,7 +1044,7 @@
             if (evt.event === 'message' && evt.message) {
               const applied = applyCompactPayload(evt.message, false);
               if (applied) {
-                showToast('⚡ เพื่อนอัปเดตตารางสดๆ!');
+                showToast('🌊 เพื่อนอัปเดตตารางสดๆ!');
               }
             }
           } catch (_) {}
@@ -1141,7 +1134,7 @@
     }
 
     // ==========================================
-    // 5. RENDER UI
+    // 5. RENDER UI (Bright Ocean Palette)
     // ==========================================
     function renderAll() {
       document.getElementById('tripTitleText').textContent = state.title || 'เช็ควันเที่ยวกับเพื่อน 2026';
@@ -1161,23 +1154,22 @@
         const btn = document.getElementById(`modeBtn-${m}`);
         if (!btn) return;
         if (paintMode === m) {
-          btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold transition-all border bg-orange-500 text-white border-orange-400 shadow-md shadow-orange-500/20';
+          btn.className = 'px-3 py-1.5 rounded-xl text-xs font-bold transition-all border bg-cyan-500 text-white border-cyan-500 shadow-sm shadow-cyan-500/20';
         } else {
-          btn.className = 'px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border bg-slate-800/90 text-slate-300 border-slate-700 hover:bg-slate-700';
+          btn.className = 'px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border bg-sky-50/70 text-slate-600 border-cyan-100 hover:bg-cyan-50 hover:text-cyan-800';
         }
       });
 
-      // Dynamic month tabs based on current date range
       const months = getAvailableMonths();
       if (monthFilter !== 'all' && monthFilter !== 'best' && !months.some(m => m.code === monthFilter)) {
         monthFilter = 'all';
       }
 
       const container = document.getElementById('monthFilterContainer');
-      let html = `<span class="text-xs font-semibold text-slate-400 mr-1">กรองช่วงเวลา:</span>`;
+      let html = `<span class="text-xs font-bold text-slate-600 mr-1">กรองช่วงเวลา:</span>`;
       const allActive = monthFilter === 'all';
       html += `
-        <button onclick="setMonthFilter('all')" class="px-3 py-1.5 rounded-xl text-xs ${allActive ? 'font-bold bg-sky-500 text-white shadow-md shadow-sky-500/20' : 'font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700'} transition-all">
+        <button onclick="setMonthFilter('all')" class="px-3 py-1.5 rounded-xl text-xs ${allActive ? 'font-bold bg-sky-600 text-white shadow-sm shadow-sky-600/20' : 'font-semibold bg-sky-50 text-slate-600 hover:bg-cyan-50 border border-cyan-100'} transition-all">
           ทั้งหมด (${state.dates.length})
         </button>
       `;
@@ -1185,7 +1177,7 @@
       months.forEach(m => {
         const active = monthFilter === m.code;
         html += `
-          <button onclick="setMonthFilter('${m.code}')" class="px-3 py-1.5 rounded-xl text-xs ${active ? 'font-bold bg-sky-500 text-white shadow-md shadow-sky-500/20' : 'font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700'} transition-all">
+          <button onclick="setMonthFilter('${m.code}')" class="px-3 py-1.5 rounded-xl text-xs ${active ? 'font-bold bg-sky-600 text-white shadow-sm shadow-sky-600/20' : 'font-semibold bg-sky-50 text-slate-600 hover:bg-cyan-50 border border-cyan-100'} transition-all">
             ${m.label}
           </button>
         `;
@@ -1193,8 +1185,8 @@
 
       const bestActive = monthFilter === 'best';
       html += `
-        <button onclick="setMonthFilter('best')" class="px-3 py-1.5 rounded-xl text-xs ${bestActive ? 'font-bold bg-sky-500 text-white shadow-md shadow-sky-500/20' : 'font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700'} transition-all flex items-center gap-1">
-          <span>🔥 วันที่ว่างเยอะสุด</span>
+        <button onclick="setMonthFilter('best')" class="px-3 py-1.5 rounded-xl text-xs ${bestActive ? 'font-bold bg-teal-600 text-white shadow-sm shadow-teal-600/20' : 'font-semibold bg-teal-50 text-teal-700 hover:bg-teal-100 border border-teal-200'} transition-all flex items-center gap-1">
+          <span>🌊 วันที่ว่างเยอะสุด</span>
         </button>
       `;
       container.innerHTML = html;
@@ -1233,7 +1225,7 @@
       document.getElementById('statBestCountBadge').textContent = `ว่างสูงสุด ${maxFree}/${totalFriends} คน`;
       if (totalFriends === 0) {
         document.getElementById('statBestDatesText').textContent = 'ยังไม่มีรายชื่อเพื่อน';
-        document.getElementById('statReadyStatus').textContent = 'กดปุ่ม "+ เพิ่มชื่อตัวเอง / เพื่อน" ด้านบนเพื่อเริ่มได้เลย';
+        document.getElementById('statReadyStatus').textContent = 'กดปุ่ม "+ เพิ่มชื่อเพื่อน" ด้านบนเพื่อเริ่มได้เลย';
       } else if (bestDates.length === 0) {
         document.getElementById('statBestDatesText').textContent = 'ยังไม่มีใครกดเลือกวันว่าง';
         document.getElementById('statReadyStatus').textContent = 'จิ้มที่ช่องในตารางเพื่อเลือกวันที่ว่างได้เลย';
@@ -1256,11 +1248,11 @@
       const totalFriends = state.friends.length;
 
       let headHTML = `
-        <tr class="border-b border-slate-800">
-          <th class="sticky-col sticky-col-shadow bg-[#ead1dc] text-slate-950 font-extrabold text-sm px-4 py-3 min-w-[165px] max-w-[195px] border-r border-slate-700 text-left">
+        <tr class="border-b border-cyan-100">
+          <th class="sticky-col sticky-col-shadow bg-gradient-to-r from-cyan-600 to-sky-600 text-white font-extrabold text-sm px-4 py-3 min-w-[165px] max-w-[195px] border-r border-cyan-500 text-left">
             <div class="flex items-center justify-between">
-              <span>Date</span>
-              <span class="text-[11px] font-semibold px-1.5 py-0.5 rounded bg-black/15 text-slate-900">${dates.length} วัน</span>
+              <span>วันที่ (Date)</span>
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-white/20 text-white">${dates.length} วัน</span>
             </div>
           </th>
       `;
@@ -1269,35 +1261,35 @@
         const { free, busy } = getDateStats(d.id);
         const isTop = maxFree > 0 && free === maxFree && busy === 0;
         headHTML += `
-          <th class="px-2 py-2.5 min-w-[96px] border-r border-slate-800/80 ${isTop ? 'bg-emerald-950/40' : 'bg-slate-900/95'} hover:bg-slate-800/80 transition-colors cursor-pointer group relative"
+          <th class="px-2 py-2.5 min-w-[96px] border-r border-cyan-100 ${isTop ? 'bg-teal-50' : 'bg-sky-50/60'} hover:bg-cyan-50 transition-colors cursor-pointer group relative"
               onclick="toggleHoliday('${d.id}')"
-              title="คลิกเพื่อสลับสีส้ม (วันหยุดพิเศษ)">
-            ${isTop ? `<div class="text-[10px] font-extrabold text-emerald-400 mb-0.5">★ ว่างตรงกัน!</div>` : ''}
-            <div class="text-xs font-bold text-slate-100 tracking-tight">${d.label}</div>
-            <div class="text-[11px] text-slate-400 font-normal">${formatShortThaiDate(d.label)}</div>
+              title="คลิกเพื่อเปิด/ปิดวันหยุดพิเศษ">
+            ${isTop ? `<div class="text-[10px] font-extrabold text-teal-600 mb-0.5">★ ว่างตรงกัน!</div>` : ''}
+            <div class="text-xs font-bold text-slate-800 tracking-tight">${d.label}</div>
+            <div class="text-[11px] text-slate-500 font-medium">${formatShortThaiDate(d.label)}</div>
           </th>
         `;
       });
       headHTML += `</tr>`;
 
       headHTML += `
-        <tr class="border-b-2 border-slate-700">
-          <th class="sticky-col sticky-col-shadow bg-slate-900 text-slate-400 text-xs font-semibold px-4 py-2 border-r border-slate-700 text-left">
+        <tr class="border-b-2 border-cyan-200">
+          <th class="sticky-col sticky-col-shadow bg-sky-50 text-slate-700 text-xs font-bold px-4 py-2 border-r border-cyan-200 text-left">
             <div class="flex items-center justify-between">
-              <span>ชื่อเพื่อน (${totalFriends} คน)</span>
-              <button onclick="openAddFriendModal()" class="text-[11px] text-sky-400 hover:text-sky-300 font-bold">+ เพิ่ม</button>
+              <span>รายชื่อเพื่อน (${totalFriends} คน)</span>
+              <button onclick="openAddFriendModal()" class="text-[11px] text-cyan-600 hover:text-cyan-700 font-extrabold">+ เพิ่ม</button>
             </div>
           </th>
       `;
 
       dates.forEach((d) => {
         const dowStyle = d.isHoliday
-          ? 'bg-[#ff9900] text-slate-950 font-extrabold shadow-inner'
-          : (d.dow === 'Sun' ? 'bg-slate-800/80 text-rose-300 font-semibold' : (d.dow === 'Sat' ? 'bg-slate-800/50 text-sky-300 font-semibold' : 'bg-slate-900 text-slate-300 font-medium'));
+          ? 'bg-amber-300/90 text-amber-950 font-extrabold'
+          : (d.dow === 'Sun' ? 'bg-sky-100/70 text-rose-600 font-bold' : (d.dow === 'Sat' ? 'bg-sky-100/70 text-sky-700 font-bold' : 'bg-white text-slate-500 font-semibold'));
         headHTML += `
-          <th class="px-2 py-1.5 text-xs border-r border-slate-800/80 cursor-pointer ${dowStyle}"
+          <th class="px-2 py-1.5 text-xs border-r border-cyan-100 cursor-pointer ${dowStyle}"
               onclick="toggleHoliday('${d.id}')"
-              title="คลิกเพื่อเปิด/ปิดสีส้ม (วันหยุด)">
+              title="คลิกเพื่อเปิด/ปิดแถบวันหยุดพิเศษ">
             <div class="flex items-center justify-center gap-1">
               <span>${d.dow}</span>
               ${d.isHoliday ? '<span class="text-[10px]">🏖️</span>' : ''}
@@ -1315,25 +1307,25 @@
           ? `${state.dates[0].id} – ${state.dates[state.dates.length - 1].id} (${state.dates.length} วัน)`
           : 'ยังไม่ได้เลือกวันที่';
         bodyHTML = `
-          <tr class="border-b border-slate-800/70">
-            <td colspan="${dates.length + 1}" class="py-12 px-6 text-center bg-slate-900/40">
+          <tr class="border-b border-cyan-100">
+            <td colspan="${dates.length + 1}" class="py-12 px-6 text-center bg-gradient-to-b from-white to-sky-50/50">
               <div class="max-w-lg mx-auto flex flex-col items-center gap-3.5">
-                <div class="w-12 h-12 rounded-2xl bg-sky-500/15 border border-sky-500/30 text-sky-400 flex items-center justify-center">
-                  <i data-lucide="calendar-range" class="w-6 h-6"></i>
+                <div class="w-12 h-12 rounded-2xl bg-cyan-50 border border-cyan-200 text-cyan-600 flex items-center justify-center shadow-sm">
+                  <i data-lucide="palmtree" class="w-6 h-6"></i>
                 </div>
                 <div>
-                  <h4 class="text-base font-bold text-white">ตารางนี้ยังไม่มีรายชื่อเพื่อน</h4>
-                  <p class="text-xs text-slate-400 mt-1">ช่วงวันที่ปัจจุบัน: <strong class="text-orange-300">${rangeText}</strong></p>
-                  <p class="text-xs text-slate-400 mt-0.5">คุณสามารถกำหนดช่วงวันที่ใหม่ หรือกดเพิ่มชื่อคนแรกเพื่อเริ่มแชร์ลิงก์ให้เพื่อนได้เลย!</p>
+                  <h4 class="text-base font-bold text-slate-900">ตารางทริปนี้ยังไม่มีรายชื่อเพื่อน</h4>
+                  <p class="text-xs text-slate-500 mt-1">ช่วงวันที่ปัจจุบัน: <strong class="text-cyan-700">${rangeText}</strong></p>
+                  <p class="text-xs text-slate-500 mt-0.5">เลือกช่วงวันที่จากปฏิทิน หรือกดเพิ่มรายชื่อเพื่อนหลายๆ คนพร้อมกันเพื่อเริ่มแชร์ลิงก์ได้เลย!</p>
                 </div>
                 <div class="flex items-center gap-2.5 flex-wrap justify-center mt-1">
-                  <button onclick="openSetupRangeModal(false)" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-amber-300 font-semibold text-xs sm:text-sm transition-all flex items-center gap-1.5">
+                  <button onclick="openSetupRangeModal(false)" class="px-4 py-2.5 rounded-xl bg-white hover:bg-cyan-50 border border-cyan-200 text-cyan-700 font-bold text-xs sm:text-sm transition-all flex items-center gap-1.5 shadow-sm">
                     <i data-lucide="calendar-range" class="w-4 h-4"></i>
-                    <span>กำหนดช่วงวันที่ (xx/xx/xxxx - xx/xx/xxxx)</span>
+                    <span>เลือกช่วงวันที่จากปฏิทิน</span>
                   </button>
-                  <button onclick="openAddFriendModal()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-sky-500/25 transition-all flex items-center gap-1.5">
+                  <button onclick="openAddFriendModal()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-sky-600 hover:from-cyan-600 hover:to-sky-700 text-white font-bold text-xs sm:text-sm shadow-md shadow-cyan-500/20 transition-all flex items-center gap-1.5">
                     <i data-lucide="user-plus" class="w-4 h-4"></i>
-                    <span>+ เพิ่มชื่อคนแรกเข้าตาราง</span>
+                    <span>+ เพิ่มรายชื่อเพื่อนเข้าตาราง</span>
                   </button>
                 </div>
               </div>
@@ -1351,18 +1343,18 @@
           });
 
           bodyHTML += `
-            <tr class="border-b border-slate-800/70 hover:bg-slate-800/30 transition-colors">
-              <td class="sticky-col sticky-col-shadow bg-slate-900/95 hover:bg-slate-800 px-3.5 py-2.5 border-r border-slate-700 text-left cursor-pointer group"
+            <tr class="border-b border-cyan-100/80 hover:bg-sky-50/50 transition-colors">
+              <td class="sticky-col sticky-col-shadow bg-white hover:bg-sky-50 px-3.5 py-2.5 border-r border-cyan-200 text-left cursor-pointer group"
                   onclick="openFriendModal(${fIdx})"
                   title="คลิกเพื่อตั้งค่าทั้งแถวหรือเปลี่ยนชื่อ">
                 <div class="flex items-center justify-between gap-1.5">
                   <div class="flex items-center gap-2 truncate">
-                    <span class="w-5 h-5 rounded-full bg-slate-800 border border-slate-700 text-[10px] font-bold text-slate-300 flex items-center justify-center shrink-0 group-hover:border-orange-400 group-hover:text-orange-300">
+                    <span class="w-5 h-5 rounded-full bg-cyan-50 border border-cyan-200 text-[10px] font-bold text-cyan-700 flex items-center justify-center shrink-0 group-hover:bg-cyan-500 group-hover:text-white transition-colors">
                       ${fIdx + 1}
                     </span>
-                    <span class="font-semibold text-sm text-slate-100 group-hover:text-orange-400 transition-colors truncate">${friendName}</span>
+                    <span class="font-bold text-sm text-slate-800 group-hover:text-cyan-600 transition-colors truncate">${friendName}</span>
                   </div>
-                  <span class="text-[11px] font-medium px-1.5 py-0.5 rounded-md ${friendFreeCount > 0 ? 'bg-emerald-500/15 text-emerald-400' : (friendBusyCount > 0 ? 'bg-rose-500/15 text-rose-400' : 'bg-slate-800 text-slate-500')}">
+                  <span class="text-[11px] font-bold px-1.5 py-0.5 rounded-md ${friendFreeCount > 0 ? 'bg-teal-50 text-teal-700 border border-teal-200' : (friendBusyCount > 0 ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-slate-100 text-slate-400')}">
                     ${friendFreeCount}
                   </span>
                 </div>
@@ -1371,22 +1363,22 @@
 
           dates.forEach((d) => {
             const st = state.availability[friendName]?.[d.id] || 'empty';
-            let cellBg = 'bg-slate-900/40 hover:bg-slate-800/70';
-            let pillHTML = `<span class="inline-flex items-center justify-center w-[76px] py-1 rounded-lg bg-[#e8eaed]/10 text-slate-500 text-xs font-medium border border-slate-700/50 group-hover:border-slate-500 transition-all">-</span>`;
+            let cellBg = 'bg-white hover:bg-sky-50/80';
+            let pillHTML = `<span class="inline-flex items-center justify-center w-[76px] py-1 rounded-lg bg-slate-100/80 text-slate-400 text-xs font-medium border border-slate-200/70 group-hover:border-cyan-300 transition-all">-</span>`;
 
             if (st === 'free') {
-              cellBg = 'bg-[#b6d7a8]/20 hover:bg-[#b6d7a8]/30';
-              pillHTML = `<span class="inline-flex items-center justify-center w-[76px] py-1 rounded-lg bg-[#11734b] text-[#d4edbc] text-xs font-bold shadow-sm border border-emerald-400/30">ว่าง</span>`;
+              cellBg = 'bg-teal-50/70 hover:bg-teal-100/70';
+              pillHTML = `<span class="inline-flex items-center justify-center w-[76px] py-1 rounded-lg bg-teal-500 text-white text-xs font-bold shadow-sm">ว่าง</span>`;
             } else if (st === 'busy') {
-              cellBg = 'bg-[#f4cccc]/15 hover:bg-[#f4cccc]/25';
-              pillHTML = `<span class="inline-flex items-center justify-center w-[76px] py-1 rounded-lg bg-rose-700 text-rose-100 text-xs font-bold shadow-sm border border-rose-400/30">ไม่ว่าง</span>`;
+              cellBg = 'bg-rose-50/60 hover:bg-rose-100/60';
+              pillHTML = `<span class="inline-flex items-center justify-center w-[76px] py-1 rounded-lg bg-rose-400 text-white text-xs font-bold shadow-sm">ไม่ว่าง</span>`;
             } else if (st === 'maybe') {
-              cellBg = 'bg-amber-950/30 hover:bg-amber-950/45';
-              pillHTML = `<span class="inline-flex items-center justify-center w-[76px] py-1 rounded-lg bg-amber-600 text-amber-50 text-xs font-bold shadow-sm border border-amber-400/30">อาจจะ</span>`;
+              cellBg = 'bg-amber-50/70 hover:bg-amber-100/70';
+              pillHTML = `<span class="inline-flex items-center justify-center w-[76px] py-1 rounded-lg bg-amber-400 text-amber-950 text-xs font-bold shadow-sm">อาจจะ</span>`;
             }
 
             bodyHTML += `
-              <td class="px-1.5 py-2 border-r border-slate-800/60 cursor-pointer group transition-colors ${cellBg}"
+              <td class="px-1.5 py-2 border-r border-cyan-100/80 cursor-pointer group transition-colors ${cellBg}"
                   onmousedown="handleCellMouseDown('${friendName}', '${d.id}', event)"
                   onmouseenter="handleCellMouseEnter('${friendName}', '${d.id}')">
                 ${pillHTML}
@@ -1401,25 +1393,25 @@
 
       // TFOOT
       let footFreeRow = `
-        <tr class="border-t-2 border-slate-700 bg-slate-900/90">
-          <td class="sticky-col sticky-col-shadow bg-slate-900 px-4 py-2.5 border-r border-slate-700 text-left font-bold text-xs text-emerald-400 flex items-center justify-between">
-            <span>ว่าง</span>
-            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+        <tr class="border-t-2 border-cyan-200 bg-teal-50/40">
+          <td class="sticky-col sticky-col-shadow bg-teal-50 px-4 py-2.5 border-r border-cyan-200 text-left font-bold text-xs text-teal-800 flex items-center justify-between">
+            <span>ว่าง (คน)</span>
+            <span class="w-2 h-2 rounded-full bg-teal-500"></span>
           </td>
       `;
 
       let footBusyRow = `
-        <tr class="border-t border-slate-800 bg-slate-900/90">
-          <td class="sticky-col sticky-col-shadow bg-slate-900 px-4 py-2.5 border-r border-slate-700 text-left font-bold text-xs text-rose-400 flex items-center justify-between">
-            <span>ไม่ว่าง</span>
+        <tr class="border-t border-cyan-100 bg-rose-50/30">
+          <td class="sticky-col sticky-col-shadow bg-rose-50/80 px-4 py-2.5 border-r border-cyan-200 text-left font-bold text-xs text-rose-700 flex items-center justify-between">
+            <span>ไม่ว่าง (คน)</span>
             <span class="w-2 h-2 rounded-full bg-rose-400"></span>
           </td>
       `;
 
       let footSummaryRow = `
-        <tr class="border-t-2 border-slate-700">
-          <td class="sticky-col sticky-col-shadow bg-[#ff9900] text-slate-950 px-4 py-2.5 border-r border-slate-700 text-center font-extrabold text-sm">
-            สรุป
+        <tr class="border-t-2 border-cyan-200">
+          <td class="sticky-col sticky-col-shadow bg-gradient-to-r from-cyan-600 to-sky-600 text-white px-4 py-2.5 border-r border-cyan-500 text-center font-extrabold text-sm">
+            สรุปผล
           </td>
       `;
 
@@ -1428,15 +1420,15 @@
         const isBest = maxFree > 0 && free === maxFree && busy === 0;
 
         footFreeRow += `
-          <td class="px-2 py-2 border-r border-slate-800 font-bold text-sm ${isBest ? 'text-emerald-300 bg-emerald-950/40' : 'text-slate-200'}"
+          <td class="px-2 py-2 border-r border-cyan-100 font-extrabold text-sm ${isBest ? 'text-teal-700 bg-teal-100/70' : 'text-slate-700'}"
               title="คนที่ว่าง: ${freeNames.join(', ') || '-'}">
             ${free}
-            ${maybe > 0 ? `<span class="text-[10px] text-amber-400 font-normal">(+${maybe})</span>` : ''}
+            ${maybe > 0 ? `<span class="text-[10px] text-amber-600 font-semibold">(+${maybe})</span>` : ''}
           </td>
         `;
 
         footBusyRow += `
-          <td class="px-2 py-2 border-r border-slate-800 font-semibold text-sm ${busy > 0 ? 'text-rose-400 bg-rose-950/20' : 'text-slate-500'}"
+          <td class="px-2 py-2 border-r border-cyan-100 font-bold text-sm ${busy > 0 ? 'text-rose-600 bg-rose-100/50' : 'text-slate-400'}"
               title="คนที่ไม่ว่าง: ${busyNames.join(', ') || '-'}">
             ${busy}
           </td>
@@ -1445,19 +1437,19 @@
         let summaryCell = '';
         if (free === totalFriends && totalFriends > 0) {
           summaryCell = `
-            <td class="px-2 py-2.5 border-r border-slate-800 bg-emerald-500 text-slate-950 font-extrabold text-xs tracking-wide">
+            <td class="px-2 py-2.5 border-r border-cyan-100 bg-teal-500 text-white font-extrabold text-xs tracking-wide">
               ✓ ครบแก๊ง!
             </td>
           `;
         } else if (isBest && free >= 2) {
           summaryCell = `
-            <td class="px-2 py-2.5 border-r border-slate-800 bg-emerald-900/80 text-emerald-200 font-extrabold text-xs">
+            <td class="px-2 py-2.5 border-r border-cyan-100 bg-cyan-100 text-cyan-900 font-extrabold text-xs">
               ★ ว่าง ${free}
             </td>
           `;
         } else {
           summaryCell = `
-            <td class="px-2 py-2.5 border-r border-slate-800 bg-black text-white font-extrabold text-sm">
+            <td class="px-2 py-2.5 border-r border-cyan-100 bg-slate-100 text-slate-400 font-bold text-xs">
               X
             </td>
           `;
@@ -1472,15 +1464,13 @@
       document.getElementById('gridFoot').innerHTML = footFreeRow + footBusyRow + footSummaryRow;
     }
 
-    // Dynamic consecutive/weekend block ranking that adapts to ANY date range
     function renderWeekendRankings() {
       const container = document.getElementById('weekendRankingCards');
       if (state.dates.length === 0) {
-        container.innerHTML = `<div class="col-span-3 text-xs text-slate-500 py-4 text-center">ยังไม่มีวันที่ในตาราง</div>`;
+        container.innerHTML = `<div class="col-span-3 text-xs text-slate-400 py-4 text-center">ยังไม่มีวันที่ในตาราง</div>`;
         return;
       }
 
-      // Group adjacent dates (within 1 day gap) into blocks, or single dates if standalone
       const blocks = [];
       let currentGroup = [];
 
@@ -1544,33 +1534,33 @@
       const top3 = scored.slice(0, 3);
       container.innerHTML = top3.map((item, idx) => {
         const rankColors = [
-          'border-emerald-500/40 bg-gradient-to-br from-emerald-950/40 to-slate-900',
-          'border-sky-500/30 bg-slate-950/60',
-          'border-slate-700/80 bg-slate-950/60'
+          'border-teal-300 bg-gradient-to-br from-teal-50/90 to-cyan-50/60',
+          'border-cyan-200 bg-sky-50/50',
+          'border-slate-200 bg-slate-50/60'
         ];
         const badgeColors = [
-          'bg-emerald-500 text-slate-950',
-          'bg-sky-500 text-slate-950',
-          'bg-slate-700 text-slate-200'
+          'bg-teal-500 text-white',
+          'bg-cyan-500 text-white',
+          'bg-slate-200 text-slate-700'
         ];
         return `
-          <div class="p-4 rounded-2xl border ${rankColors[idx]} flex flex-col justify-between gap-2">
+          <div class="p-4 rounded-2xl border ${rankColors[idx]} flex flex-col justify-between gap-2 shadow-sm">
             <div>
               <div class="flex items-center justify-between gap-2 mb-1.5">
-                <span class="px-2 py-0.5 rounded-full text-[11px] font-extrabold ${badgeColors[idx]}">
+                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold ${badgeColors[idx]}">
                   อันดับ #${idx + 1}
                 </span>
-                <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full ${item.isLongWeekend ? 'bg-orange-500/20 text-orange-300 border border-orange-500/30' : 'bg-slate-800 text-slate-400'}">
+                <span class="text-[11px] font-bold px-2 py-0.5 rounded-full ${item.isLongWeekend ? 'bg-amber-100 text-amber-800 border border-amber-300' : 'bg-white text-slate-600 border border-slate-200'}">
                   ${item.tag}
                 </span>
               </div>
-              <h4 class="font-bold text-sm text-white">${item.title}</h4>
+              <h4 class="font-bold text-sm text-slate-900">${item.title}</h4>
             </div>
-            <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs">
-              <span class="text-emerald-400 font-semibold">ว่างครบทุกวัน: ${item.allFreeCount}/${state.friends.length} คน</span>
-              <span class="text-rose-400">ติดธุระ: ${item.anyBusyCount} คน</span>
+            <div class="pt-2 border-t border-cyan-200/60 flex items-center justify-between text-xs">
+              <span class="text-teal-700 font-bold">ว่างครบทุกวัน: ${item.allFreeCount}/${state.friends.length} คน</span>
+              <span class="text-rose-600 font-semibold">ติดธุระ: ${item.anyBusyCount} คน</span>
             </div>
-            <div class="text-[11px] text-slate-400 truncate">
+            <div class="text-[11px] text-slate-600 truncate">
               ${item.allFreeFriends.length > 0 ? `พร้อมลุย: ${item.allFreeFriends.join(', ')}` : 'ยังไม่มีคนว่างครบทุกวันในช่วงนี้'}
             </div>
           </div>
@@ -1630,7 +1620,7 @@
       target.isHoliday = !target.isHoliday;
       renderAll();
       scheduleBroadcast();
-      showToast(`${target.id}: ${target.isHoliday ? 'ตั้งเป็นวันหยุดพิเศษ (สีส้ม)' : 'ตั้งเป็นวันปกติ'}`);
+      showToast(`${target.id}: ${target.isHoliday ? 'ตั้งเป็นวันหยุดพิเศษ 🏖️' : 'ตั้งเป็นวันปกติ'}`);
     }
 
     function saveMeetupInfo() {
@@ -1641,11 +1631,11 @@
 
     // --- Modal 0: Interactive Visual Calendar Date Range Picker ---
     let calViewYear = 2026;
-    let calViewMonth = 9; // 0-indexed (9 = Oct)
+    let calViewMonth = 9;
     let calRangeStartISO = '2026-10-23';
     let calRangeEndISO = '2026-12-27';
     let calHoverISO = null;
-    let calSelectingStep = 0; // 0 = ready to pick start, 1 = start picked, waiting for end
+    let calSelectingStep = 0;
 
     const THAI_MONTH_FULL = [
       'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
@@ -1729,7 +1719,7 @@
 
     function buildSingleMonthHTML(year, month) {
       const firstDay = new Date(year, month, 1);
-      const startDow = firstDay.getDay(); // 0 Sun .. 6 Sat
+      const startDow = firstDay.getDay();
       const daysInMonth = new Date(year, month + 1, 0).getDate();
 
       const effStart = calSelectingStep === 1 && calHoverISO
@@ -1740,18 +1730,18 @@
         : calRangeEndISO;
 
       let html = `
-        <div class="p-3 rounded-2xl bg-slate-900/90 border border-slate-800/90">
-          <div class="text-center font-bold text-xs sm:text-sm text-white mb-2.5">
+        <div class="p-3 rounded-2xl bg-white border border-cyan-100 shadow-sm">
+          <div class="text-center font-bold text-xs sm:text-sm text-slate-800 mb-2.5">
             ${THAI_MONTH_FULL[month]} ${year}
           </div>
           <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-400 mb-1">
-            <span class="text-rose-400">อา</span>
+            <span class="text-rose-500">อา</span>
             <span>จ</span>
             <span>อ</span>
             <span>พ</span>
             <span>พฤ</span>
             <span>ศ</span>
-            <span class="text-sky-400">ส</span>
+            <span class="text-sky-600">ส</span>
           </div>
           <div class="grid grid-cols-7 gap-1">
       `;
@@ -1770,11 +1760,11 @@
 
         let btnClass = 'h-8 rounded-lg text-xs font-semibold flex items-center justify-center relative transition-all cursor-pointer ';
         if (isStart || isEnd) {
-          btnClass += 'bg-gradient-to-br from-orange-500 to-amber-500 text-slate-950 font-extrabold shadow-md shadow-orange-500/30 ring-2 ring-orange-300 ';
+          btnClass += 'bg-gradient-to-br from-cyan-500 to-sky-600 text-white font-extrabold shadow-md shadow-cyan-500/30 ring-2 ring-cyan-300 ';
         } else if (inRange) {
-          btnClass += 'bg-orange-500/20 text-orange-200 border border-orange-500/30 ';
+          btnClass += 'bg-cyan-100/80 text-cyan-900 border border-cyan-300 ';
         } else {
-          btnClass += 'bg-slate-950/60 hover:bg-slate-800 text-slate-200 ';
+          btnClass += 'bg-slate-50 hover:bg-sky-100 text-slate-700 ';
         }
 
         html += `
@@ -1784,7 +1774,7 @@
             class="${btnClass}"
             title="${ddmmyyyy}${isHol ? ' (วันหยุดนักขัตฤกษ์)' : ''}">
             <span>${d}</span>
-            ${isHol ? `<span class="w-1.5 h-1.5 rounded-full bg-[#ff9900] absolute top-1 right-1"></span>` : ''}
+            ${isHol ? `<span class="w-1.5 h-1.5 rounded-full bg-amber-400 absolute top-1 right-1"></span>` : ''}
           </button>
         `;
       }
@@ -1816,9 +1806,9 @@
         const btn = document.getElementById(`rangeFilterBtn-${m}`);
         if (!btn) return;
         if (m === mode) {
-          btn.className = 'px-3 py-2 rounded-xl border text-xs font-bold flex flex-col items-center gap-0.5 transition-all bg-orange-500/20 border-orange-400 text-orange-200 shadow-sm';
+          btn.className = 'px-3 py-2 rounded-xl border text-xs font-bold flex flex-col items-center gap-0.5 transition-all bg-cyan-500 text-white border-cyan-500 shadow-sm';
         } else {
-          btn.className = 'px-3 py-2 rounded-xl border text-xs font-semibold flex flex-col items-center gap-0.5 transition-all bg-slate-950/60 border-slate-800 text-slate-400 hover:bg-slate-800/80 hover:text-slate-200';
+          btn.className = 'px-3 py-2 rounded-xl border text-xs font-semibold flex flex-col items-center gap-0.5 transition-all bg-sky-50/60 border-cyan-100 text-slate-600 hover:bg-cyan-50 hover:text-cyan-800';
         }
       });
       updateSetupRangePreview();
@@ -1845,7 +1835,7 @@
     function openSetupRangeModal(isFirstVisit = false) {
       const modal = document.getElementById('setupRangeModal');
       document.getElementById('setupModalHeaderTitle').textContent = isFirstVisit
-        ? 'ยินดีต้อนรับ! จิ้มเลือกช่วงวันทริปของคุณ'
+        ? 'ยินดีต้อนรับ! จิ้มเลือกช่วงวันทริปของคุณ 🏖️'
         : 'เลือกช่วงวันที่จากปฏิทิน (Date Range)';
       document.getElementById('setupTripTitleInput').value = state.title || 'เช็ควันเที่ยวกับเพื่อน 2026';
 
@@ -1914,9 +1904,9 @@
         const btn = document.getElementById(`presetBtn-${p}`);
         if (!btn) return;
         if (p === preset) {
-          btn.className = 'px-3 py-2.5 rounded-xl border text-xs font-bold flex flex-col items-center gap-1 transition-all bg-sky-500/20 border-sky-400 text-sky-200 shadow-sm';
+          btn.className = 'px-3 py-2.5 rounded-xl border text-xs font-bold flex flex-col items-center gap-1 transition-all bg-cyan-500 text-white border-cyan-500 shadow-sm';
         } else {
-          btn.className = 'px-3 py-2.5 rounded-xl border text-xs font-semibold flex flex-col items-center gap-1 transition-all bg-slate-950/60 border-slate-800 text-slate-400 hover:bg-slate-800/80 hover:text-slate-200';
+          btn.className = 'px-3 py-2.5 rounded-xl border text-xs font-semibold flex flex-col items-center gap-1 transition-all bg-sky-50/60 border-cyan-100 text-slate-600 hover:bg-cyan-50 hover:text-cyan-800';
         }
       });
     }
@@ -1941,14 +1931,14 @@
 
       if (!container) return;
       if (pendingFriendsQueue.length === 0) {
-        container.innerHTML = `<span class="text-xs text-slate-500 px-1">รายชื่อที่เพิ่มจะแสดงเป็นป้ายที่นี่ (คลิก × เพื่อลบออกได้)</span>`;
+        container.innerHTML = `<span class="text-xs text-slate-400 px-1">รายชื่อที่เพิ่มจะแสดงเป็นป้ายที่นี่ (คลิก × เพื่อลบออกได้)</span>`;
         return;
       }
 
       container.innerHTML = pendingFriendsQueue.map((name, idx) => `
-        <span class="inline-flex items-center gap-1.5 pl-2.5 pr-1.5 py-1 rounded-xl bg-sky-500/15 border border-sky-500/30 text-sky-200 text-xs font-semibold">
+        <span class="inline-flex items-center gap-1.5 pl-2.5 pr-1.5 py-1 rounded-xl bg-cyan-100 border border-cyan-300 text-cyan-900 text-xs font-bold">
           <span>${idx + 1}. ${name}</span>
-          <button type="button" onclick="removePendingFriendChip(${idx})" class="w-4 h-4 rounded-full hover:bg-sky-500/30 flex items-center justify-center text-sky-300 hover:text-white">×</button>
+          <button type="button" onclick="removePendingFriendChip(${idx})" class="w-4 h-4 rounded-full hover:bg-cyan-200 flex items-center justify-center text-cyan-700">×</button>
         </span>
       `).join('');
     }
@@ -2293,7 +2283,7 @@
         !state.dates.some(d => (state.availability[f]?.[d.id] || 'empty') !== 'empty')
       );
 
-      let text = `📅 สรุปผล "${state.title}"\n`;
+      let text = `🏖️ สรุปผล "${state.title}"\n`;
       if (state.meetupPlace || state.meetupTime) {
         text += `📍 นัดพบ: ${state.meetupPlace || '-'} | ⏰ เวลา: ${state.meetupTime || '-'}\n`;
       }
@@ -2379,7 +2369,6 @@
       const roomParam = params.get('room');
 
       if (!roomParam) {
-        // Fresh visit to root URL: blank friends & automatically pop up the Date Range Setup Modal!
         currentRoomId = null;
         state = buildBlankState();
         updateRoomStatusUI(false);
