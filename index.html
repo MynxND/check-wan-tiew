@@ -461,17 +461,17 @@
     </div>
   </div>
 
-  <!-- 1. Add Friend Modal -->
-  <div id="addFriendModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/80 backdrop-blur-md p-4" onclick="if(event.target===this)closeAddFriendModal()">
-    <div class="modal-card w-full max-w-md rounded-3xl bg-slate-900 border border-slate-700/80 shadow-2xl shadow-black/60 overflow-hidden">
+  <!-- 1. Add Multiple Friends Modal -->
+  <div id="addFriendModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/80 backdrop-blur-md p-4 overflow-y-auto" onclick="if(event.target===this)closeAddFriendModal()">
+    <div class="modal-card w-full max-w-md rounded-3xl bg-slate-900 border border-slate-700/80 shadow-2xl shadow-black/60 overflow-hidden my-auto">
       <div class="px-6 pt-6 pb-4 bg-gradient-to-b from-sky-500/10 to-transparent border-b border-slate-800/80 flex items-center justify-between">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-2xl bg-sky-500/20 border border-sky-500/30 text-sky-400 flex items-center justify-center">
-            <i data-lucide="user-plus" class="w-5 h-5"></i>
+            <i data-lucide="users" class="w-5 h-5"></i>
           </div>
           <div>
-            <h3 class="text-base sm:text-lg font-bold text-white">เพิ่มรายชื่อเข้าตาราง</h3>
-            <p class="text-xs text-slate-400">เพิ่มชื่อตัวเองหรือเพิ่มเพื่อนหลายๆ คนพร้อมกันได้เลย</p>
+            <h3 class="text-base sm:text-lg font-bold text-white">เพิ่มรายชื่อเพื่อนเข้าตาราง</h3>
+            <p class="text-xs text-slate-400">เพิ่มทีละคน หรือเพิ่มเพื่อนหลายๆ คนพร้อมกันในครั้งเดียวได้เลย</p>
           </div>
         </div>
         <button onclick="closeAddFriendModal()" class="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
@@ -479,18 +479,35 @@
         </button>
       </div>
 
-      <form onsubmit="submitAddFriendModal(event)" class="p-6 space-y-5">
+      <form onsubmit="submitAddFriendModal(event)" class="p-6 space-y-4">
+        <!-- Input + Add Button + Tag Chips -->
         <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-2">
-            ชื่อเล่น (คั่นด้วยเครื่องหมายจุลภาค <code class="text-sky-400">,</code> เพื่อเพิ่มหลายคนพร้อมกันได้)
-          </label>
-          <input id="addFriendNameInput" type="text" placeholder="เช่น ป็อบ หรือ บอย, อู๋, เซฟ" required
-            class="w-full px-4 py-3 rounded-2xl bg-slate-950 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all" />
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="text-xs font-semibold text-slate-300">
+              พิมพ์ชื่อเพื่อน (กด <kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-sky-300 text-[10px]">Enter</kbd> หรือ <kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-sky-300 text-[10px]">,</kbd> หรือวางหลายบรรทัด)
+            </label>
+            <span id="pendingFriendCountBadge" class="text-[11px] font-bold text-sky-400">รอเพิ่ม 0 คน</span>
+          </div>
+
+          <div class="flex gap-2">
+            <textarea id="addFriendNameInput" rows="2" placeholder="พิมพ์ชื่อ เช่น ป็อบ, บอย หรือวางรายชื่อหลายบรรทัด..."
+              onkeydown="handleAddFriendInputKeydown(event)"
+              oninput="handleAddFriendInputChange()"
+              class="flex-1 px-3.5 py-2.5 rounded-2xl bg-slate-950 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-all resize-none"></textarea>
+            <button type="button" onclick="addTypedFriendsToQueue()" class="px-3.5 rounded-2xl bg-sky-500/20 hover:bg-sky-500/30 border border-sky-500/40 text-sky-300 text-xs font-bold shrink-0 transition-all flex flex-col items-center justify-center gap-0.5">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+              <span>เพิ่มในคิว</span>
+            </button>
+          </div>
+
+          <!-- Queued Friend Chips -->
+          <div id="pendingFriendsChipsContainer" class="mt-2.5 min-h-[44px] max-h-36 overflow-y-auto p-2.5 rounded-2xl bg-slate-950/80 border border-slate-800/90 flex flex-wrap gap-1.5 items-center"></div>
+
           <p id="addFriendError" class="hidden text-xs text-rose-400 mt-1.5 font-medium"></p>
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-2">ตั้งค่าสถานะเริ่มต้นให้ชื่อที่เพิ่ม</label>
+          <label class="block text-xs font-semibold text-slate-300 mb-2">ตั้งค่าสถานะเริ่มต้นให้เพื่อนที่เพิ่มรอบนี้</label>
           <div class="grid grid-cols-3 gap-2">
             <button type="button" onclick="selectNewFriendPreset('empty')" id="presetBtn-empty"
               class="px-3 py-2.5 rounded-xl border text-xs font-semibold flex flex-col items-center gap-1 transition-all">
@@ -510,14 +527,19 @@
           </div>
         </div>
 
-        <div class="pt-2 flex items-center justify-end gap-2.5">
-          <button type="button" onclick="closeAddFriendModal()" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors">
-            ยกเลิก
+        <div class="pt-2 flex items-center justify-between gap-2.5">
+          <button type="button" onclick="clearPendingFriendsQueue()" class="text-xs text-slate-400 hover:text-rose-400 transition-colors">
+            ล้างคิวรายชื่อ
           </button>
-          <button type="submit" class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white shadow-lg shadow-sky-500/25 transition-all flex items-center gap-1.5">
-            <i data-lucide="check" class="w-4 h-4"></i>
-            <span>เพิ่มเข้าตาราง</span>
-          </button>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="closeAddFriendModal()" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors">
+              ยกเลิก
+            </button>
+            <button type="submit" class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white shadow-lg shadow-sky-500/25 transition-all flex items-center gap-1.5">
+              <i data-lucide="user-plus" class="w-4 h-4"></i>
+              <span id="submitAddFriendsBtnText">บันทึกเข้าตาราง</span>
+            </button>
+          </div>
         </div>
       </form>
     </div>
@@ -1882,7 +1904,9 @@
       showToast(`สร้างตารางช่วง ${generated[0].id} - ${generated[generated.length - 1].id} (${generated.length} วัน) เรียบร้อย!`);
     }
 
-    // --- Modal 1: Add Friend ---
+    // --- Modal 1: Add Multiple Friends (Interactive Tag Queue) ---
+    let pendingFriendsQueue = [];
+
     function selectNewFriendPreset(preset) {
       newFriendPreset = preset;
       const presets = ['empty', 'free', 'holiday_free'];
@@ -1897,13 +1921,108 @@
       });
     }
 
+    function parseFriendNamesFromText(rawText) {
+      return rawText
+        .split(/[\n,]+/)
+        .map(s => s.replace(/^\d+[\.\)]\s*/, '').trim())
+        .filter(Boolean);
+    }
+
+    function renderPendingFriendsChips() {
+      const container = document.getElementById('pendingFriendsChipsContainer');
+      const badge = document.getElementById('pendingFriendCountBadge');
+      const submitText = document.getElementById('submitAddFriendsBtnText');
+      const input = document.getElementById('addFriendNameInput');
+      const liveTyped = input ? parseFriendNamesFromText(input.value) : [];
+      const totalCount = pendingFriendsQueue.length + liveTyped.length;
+
+      if (badge) badge.textContent = `รอเพิ่ม ${totalCount} คน`;
+      if (submitText) submitText.textContent = totalCount > 0 ? `บันทึกเข้าตาราง (${totalCount} คน)` : 'บันทึกเข้าตาราง';
+
+      if (!container) return;
+      if (pendingFriendsQueue.length === 0) {
+        container.innerHTML = `<span class="text-xs text-slate-500 px-1">รายชื่อที่เพิ่มจะแสดงเป็นป้ายที่นี่ (คลิก × เพื่อลบออกได้)</span>`;
+        return;
+      }
+
+      container.innerHTML = pendingFriendsQueue.map((name, idx) => `
+        <span class="inline-flex items-center gap-1.5 pl-2.5 pr-1.5 py-1 rounded-xl bg-sky-500/15 border border-sky-500/30 text-sky-200 text-xs font-semibold">
+          <span>${idx + 1}. ${name}</span>
+          <button type="button" onclick="removePendingFriendChip(${idx})" class="w-4 h-4 rounded-full hover:bg-sky-500/30 flex items-center justify-center text-sky-300 hover:text-white">×</button>
+        </span>
+      `).join('');
+    }
+
+    function addTypedFriendsToQueue() {
+      const input = document.getElementById('addFriendNameInput');
+      const err = document.getElementById('addFriendError');
+      if (!input) return;
+      const names = parseFriendNamesFromText(input.value);
+      if (names.length === 0) return;
+
+      const duplicates = [];
+      names.forEach(n => {
+        if (state.friends.includes(n) || pendingFriendsQueue.includes(n)) {
+          duplicates.push(n);
+        } else {
+          pendingFriendsQueue.push(n);
+        }
+      });
+
+      input.value = '';
+      if (duplicates.length > 0) {
+        err.textContent = `ข้ามชื่อที่มีอยู่แล้ว: ${duplicates.join(', ')}`;
+        err.classList.remove('hidden');
+      } else {
+        err.classList.add('hidden');
+      }
+      renderPendingFriendsChips();
+      input.focus();
+    }
+
+    function handleAddFriendInputKeydown(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        const input = document.getElementById('addFriendNameInput');
+        if (input && input.value.trim()) {
+          e.preventDefault();
+          addTypedFriendsToQueue();
+        }
+      } else if (e.key === ',') {
+        e.preventDefault();
+        addTypedFriendsToQueue();
+      }
+    }
+
+    function handleAddFriendInputChange() {
+      const input = document.getElementById('addFriendNameInput');
+      if (input && (input.value.includes('\n') || input.value.includes(','))) {
+        addTypedFriendsToQueue();
+      } else {
+        renderPendingFriendsChips();
+      }
+    }
+
+    function removePendingFriendChip(idx) {
+      pendingFriendsQueue.splice(idx, 1);
+      renderPendingFriendsChips();
+    }
+
+    function clearPendingFriendsQueue() {
+      pendingFriendsQueue = [];
+      const input = document.getElementById('addFriendNameInput');
+      if (input) input.value = '';
+      renderPendingFriendsChips();
+    }
+
     function openAddFriendModal() {
       const modal = document.getElementById('addFriendModal');
       const input = document.getElementById('addFriendNameInput');
       const err = document.getElementById('addFriendError');
+      pendingFriendsQueue = [];
       err.classList.add('hidden');
       input.value = '';
       selectNewFriendPreset('empty');
+      renderPendingFriendsChips();
       modal.classList.remove('hidden');
       modal.classList.add('flex');
       if (window.lucide) lucide.createIcons();
@@ -1920,17 +2039,20 @@
       e.preventDefault();
       const input = document.getElementById('addFriendNameInput');
       const err = document.getElementById('addFriendError');
-      const raw = input.value.trim();
-      if (!raw) return;
 
-      const names = raw.split(',').map(s => s.trim()).filter(Boolean);
+      if (input && input.value.trim()) {
+        addTypedFriendsToQueue();
+      }
+
+      if (pendingFriendsQueue.length === 0) {
+        err.textContent = 'กรุณาพิมพ์ชื่อเพื่อนอย่างน้อย 1 คนครับ';
+        err.classList.remove('hidden');
+        return;
+      }
+
       const added = [];
-      const duplicates = [];
-
-      names.forEach(clean => {
-        if (state.friends.includes(clean)) {
-          duplicates.push(clean);
-        } else {
+      pendingFriendsQueue.forEach(clean => {
+        if (!state.friends.includes(clean)) {
           state.friends.push(clean);
           state.availability[clean] = {};
           state.dates.forEach(d => {
@@ -1946,16 +2068,11 @@
         }
       });
 
-      if (added.length === 0 && duplicates.length > 0) {
-        err.textContent = `มีชื่อ "${duplicates.join(', ')}" ในตารางอยู่แล้วครับ`;
-        err.classList.remove('hidden');
-        return;
-      }
-
+      pendingFriendsQueue = [];
       closeAddFriendModal();
       renderAll();
       scheduleBroadcast();
-      showToast(`เพิ่ม "${added.join(', ')}" เข้าตารางแล้ว!`);
+      showToast(`เพิ่มเพื่อน ${added.length} คน (${added.join(', ')}) เข้าตารางแล้ว!`);
     }
 
     // --- Modal 2: Add Single Date ---
