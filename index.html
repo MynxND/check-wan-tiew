@@ -341,17 +341,17 @@
   <!-- CUSTOM MODALS -->
   <!-- ========================================== -->
 
-  <!-- 0. First-time Setup / Date Range Generator Modal -->
-  <div id="setupRangeModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/85 backdrop-blur-md p-4" onclick="if(event.target===this)closeSetupRangeModal()">
-    <div class="modal-card w-full max-w-lg rounded-3xl bg-slate-900 border border-slate-700/80 shadow-2xl shadow-black/70 overflow-hidden">
-      <div class="px-6 pt-6 pb-4 bg-gradient-to-b from-orange-500/15 to-transparent border-b border-slate-800/80 flex items-center justify-between">
-        <div class="flex items-center gap-3.5">
-          <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 text-white flex items-center justify-center shadow-lg shadow-orange-500/25 shrink-0">
-            <i data-lucide="calendar-range" class="w-6 h-6"></i>
+  <!-- 0. First-time Setup / Visual Date Range Picker Modal -->
+  <div id="setupRangeModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/85 backdrop-blur-md p-3 sm:p-4 overflow-y-auto" onclick="if(event.target===this)closeSetupRangeModal()">
+    <div class="modal-card w-full max-w-2xl rounded-3xl bg-slate-900 border border-slate-700/80 shadow-2xl shadow-black/70 overflow-hidden my-auto">
+      <div class="px-5 sm:px-6 pt-5 pb-3.5 bg-gradient-to-b from-orange-500/15 to-transparent border-b border-slate-800/80 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-500 text-white flex items-center justify-center shadow-lg shadow-orange-500/25 shrink-0">
+            <i data-lucide="calendar-range" class="w-5 h-5"></i>
           </div>
           <div>
-            <h3 id="setupModalHeaderTitle" class="text-base sm:text-lg font-bold text-white">สร้างตารางเช็ควันเที่ยวใหม่</h3>
-            <p class="text-xs text-slate-400">กำหนดช่วงวันที่ตั้งแต่วันเริ่มต้น – วันสิ้นสุด เพื่อสร้างตารางและลิงก์แชร์</p>
+            <h3 id="setupModalHeaderTitle" class="text-base sm:text-lg font-bold text-white">เลือกช่วงวันทริปของคุณ</h3>
+            <p class="text-xs text-slate-400">จิ้มเลือก <span class="text-orange-300 font-semibold">วันเริ่มต้น</span> และ <span class="text-orange-300 font-semibold">วันสิ้นสุด</span> บนปฏิทินได้เลย ไม่ต้องพิมพ์เอง</p>
           </div>
         </div>
         <button onclick="closeSetupRangeModal()" class="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">
@@ -359,7 +359,7 @@
         </button>
       </div>
 
-      <form onsubmit="submitSetupRangeModal(event)" class="p-6 space-y-5">
+      <form onsubmit="submitSetupRangeModal(event)" class="p-5 sm:p-6 space-y-4">
         <!-- Trip Name -->
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1.5">ชื่อทริป / หัวข้อตาราง</label>
@@ -367,24 +367,45 @@
             class="w-full px-4 py-2.5 rounded-2xl bg-slate-950 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all" />
         </div>
 
-        <!-- Start Date - End Date Range -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-          <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
-              <span>ตั้งแต่วันที่ (เริ่มต้น)</span>
-              <span id="setupStartDisplay" class="text-[11px] text-orange-400 font-mono"></span>
-            </label>
-            <input id="setupStartDateInput" type="date" required oninput="updateSetupRangePreview()"
-              class="w-full px-3.5 py-2.5 rounded-2xl bg-slate-950 border border-slate-700 text-sm text-white focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all" />
+        <!-- Visual Calendar Range Picker Container -->
+        <div class="rounded-2xl bg-slate-950/90 border border-slate-800 p-4 space-y-3">
+          <!-- Selected Range Pill Display + Quick Presets -->
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-3 border-b border-slate-800/80">
+            <div class="flex items-center gap-2">
+              <div class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700/80 text-xs flex items-center gap-2">
+                <span class="text-slate-400">เริ่ม:</span>
+                <strong id="calStartBadge" class="text-orange-400 font-mono">23/10/2026</strong>
+              </div>
+              <span class="text-slate-500">→</span>
+              <div class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700/80 text-xs flex items-center gap-2">
+                <span class="text-slate-400">ถึง:</span>
+                <strong id="calEndBadge" class="text-amber-300 font-mono">27/12/2026</strong>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <button type="button" onclick="applyQuickRangePreset('this_month')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-medium text-slate-300 transition-colors">เดือนนี้</button>
+              <button type="button" onclick="applyQuickRangePreset('next_30')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-medium text-slate-300 transition-colors">30 วันข้างหน้า</button>
+              <button type="button" onclick="applyQuickRangePreset('oct_dec_2026')" class="px-2.5 py-1 rounded-lg bg-orange-500/15 hover:bg-orange-500/25 border border-orange-500/30 text-[11px] font-semibold text-orange-300 transition-colors">ต.ค.–ธ.ค. 2026</button>
+            </div>
           </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
-              <span>ถึงวันที่ (สิ้นสุด)</span>
-              <span id="setupEndDisplay" class="text-[11px] text-orange-400 font-mono"></span>
-            </label>
-            <input id="setupEndDateInput" type="date" required oninput="updateSetupRangePreview()"
-              class="w-full px-3.5 py-2.5 rounded-2xl bg-slate-950 border border-slate-700 text-sm text-white focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all" />
+
+          <!-- Month Navigation Header -->
+          <div class="flex items-center justify-between">
+            <button type="button" onclick="shiftCalendarMonth(-1)" class="p-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 transition-colors flex items-center gap-1 text-xs font-medium px-2.5">
+              <i data-lucide="chevron-left" class="w-4 h-4"></i>
+              <span>เดือนก่อน</span>
+            </button>
+            <div id="calInstructionBadge" class="text-xs font-semibold text-orange-300">
+              👆 คลิกเลือกวันเริ่มต้นและวันสิ้นสุดบนปฏิทิน
+            </div>
+            <button type="button" onclick="shiftCalendarMonth(1)" class="p-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 transition-colors flex items-center gap-1 text-xs font-medium px-2.5">
+              <span>เดือนถัดไป</span>
+              <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </button>
           </div>
+
+          <!-- 2-Month Side-by-Side Calendar Grid -->
+          <div id="dualCalendarGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1 select-none" onmouseleave="handleCalDayHover(null)"></div>
         </div>
 
         <!-- Day Filter Mode -->
@@ -392,17 +413,17 @@
           <label class="block text-xs font-semibold text-slate-300 mb-2">รูปแบบวันที่ต้องการนำมาสร้างในตาราง</label>
           <div class="grid grid-cols-3 gap-2">
             <button type="button" onclick="selectRangeDayFilter('all')" id="rangeFilterBtn-all"
-              class="px-3 py-2.5 rounded-xl border text-xs font-semibold flex flex-col items-center gap-0.5 transition-all">
-              <span>📅 ทุกวัน</span>
+              class="px-3 py-2 rounded-xl border text-xs font-semibold flex flex-col items-center gap-0.5 transition-all">
+              <span>📅 ทุกวันในเรนจ์</span>
               <span class="text-[10px] opacity-75">จันทร์ – อาทิตย์</span>
             </button>
             <button type="button" onclick="selectRangeDayFilter('weekends_holidays')" id="rangeFilterBtn-weekends_holidays"
-              class="px-3 py-2.5 rounded-xl border text-xs font-semibold flex flex-col items-center gap-0.5 transition-all">
+              class="px-3 py-2 rounded-xl border text-xs font-semibold flex flex-col items-center gap-0.5 transition-all">
               <span>🏖️ เสาร์-อาทิตย์ + หยุด</span>
               <span class="text-[10px] opacity-75">รวมวันหยุดนักขัตฤกษ์</span>
             </button>
             <button type="button" onclick="selectRangeDayFilter('fri_to_sun')" id="rangeFilterBtn-fri_to_sun"
-              class="px-3 py-2.5 rounded-xl border text-xs font-semibold flex flex-col items-center gap-0.5 transition-all">
+              class="px-3 py-2 rounded-xl border text-xs font-semibold flex flex-col items-center gap-0.5 transition-all">
               <span>✨ ศุกร์-เสาร์-อาทิตย์</span>
               <span class="text-[10px] opacity-75">+ วันหยุดนักขัตฤกษ์</span>
             </button>
@@ -410,7 +431,7 @@
         </div>
 
         <!-- Live Preview Box -->
-        <div class="p-3.5 rounded-2xl bg-slate-950/90 border border-slate-800 flex items-center justify-between gap-3">
+        <div class="p-3 rounded-2xl bg-slate-950/90 border border-slate-800 flex items-center justify-between gap-3">
           <div class="flex items-center gap-2.5">
             <div class="w-8 h-8 rounded-xl bg-orange-500/15 text-orange-400 flex items-center justify-center shrink-0">
               <i data-lucide="calendar-check" class="w-4 h-4"></i>
@@ -1596,7 +1617,176 @@
       scheduleBroadcast();
     }
 
-    // --- Modal 0: Setup Date Range (xx/xx/xxxx - xx/xx/xxxx) ---
+    // --- Modal 0: Interactive Visual Calendar Date Range Picker ---
+    let calViewYear = 2026;
+    let calViewMonth = 9; // 0-indexed (9 = Oct)
+    let calRangeStartISO = '2026-10-23';
+    let calRangeEndISO = '2026-12-27';
+    let calHoverISO = null;
+    let calSelectingStep = 0; // 0 = ready to pick start, 1 = start picked, waiting for end
+
+    const THAI_MONTH_FULL = [
+      'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+      'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
+    ];
+
+    function dateToISO(dt) {
+      const y = dt.getFullYear();
+      const m = String(dt.getMonth() + 1).padStart(2, '0');
+      const d = String(dt.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+
+    function isoToDDMMYYYY(iso) {
+      if (!iso) return '-';
+      const [y, m, d] = iso.split('-');
+      return `${d}/${m}/${y}`;
+    }
+
+    function shiftCalendarMonth(delta) {
+      const dt = new Date(calViewYear, calViewMonth + delta, 1);
+      calViewYear = dt.getFullYear();
+      calViewMonth = dt.getMonth();
+      renderDualCalendar();
+    }
+
+    function applyQuickRangePreset(preset) {
+      const now = new Date();
+      if (preset === 'this_month') {
+        const start = new Date(now.getFullYear(), now.getMonth(), 1);
+        const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        calRangeStartISO = dateToISO(start);
+        calRangeEndISO = dateToISO(end);
+        calViewYear = start.getFullYear();
+        calViewMonth = start.getMonth();
+      } else if (preset === 'next_30') {
+        const start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const end = new Date(start.getTime());
+        end.setDate(end.getDate() + 30);
+        calRangeStartISO = dateToISO(start);
+        calRangeEndISO = dateToISO(end);
+        calViewYear = start.getFullYear();
+        calViewMonth = start.getMonth();
+      } else if (preset === 'oct_dec_2026') {
+        calRangeStartISO = '2026-10-23';
+        calRangeEndISO = '2026-12-27';
+        calViewYear = 2026;
+        calViewMonth = 9;
+      }
+      calSelectingStep = 0;
+      calHoverISO = null;
+      renderDualCalendar();
+      updateSetupRangePreview();
+    }
+
+    function handleCalDayClick(iso) {
+      if (calSelectingStep === 0) {
+        calRangeStartISO = iso;
+        calRangeEndISO = iso;
+        calSelectingStep = 1;
+      } else {
+        if (iso < calRangeStartISO) {
+          calRangeEndISO = calRangeStartISO;
+          calRangeStartISO = iso;
+        } else {
+          calRangeEndISO = iso;
+        }
+        calSelectingStep = 0;
+      }
+      renderDualCalendar();
+      updateSetupRangePreview();
+    }
+
+    function handleCalDayHover(iso) {
+      if (calSelectingStep !== 1) return;
+      if (calHoverISO !== iso) {
+        calHoverISO = iso;
+        renderDualCalendar();
+      }
+    }
+
+    function buildSingleMonthHTML(year, month) {
+      const firstDay = new Date(year, month, 1);
+      const startDow = firstDay.getDay(); // 0 Sun .. 6 Sat
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      const effStart = calSelectingStep === 1 && calHoverISO
+        ? (calHoverISO < calRangeStartISO ? calHoverISO : calRangeStartISO)
+        : calRangeStartISO;
+      const effEnd = calSelectingStep === 1 && calHoverISO
+        ? (calHoverISO < calRangeStartISO ? calRangeStartISO : calHoverISO)
+        : calRangeEndISO;
+
+      let html = `
+        <div class="p-3 rounded-2xl bg-slate-900/90 border border-slate-800/90">
+          <div class="text-center font-bold text-xs sm:text-sm text-white mb-2.5">
+            ${THAI_MONTH_FULL[month]} ${year}
+          </div>
+          <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-400 mb-1">
+            <span class="text-rose-400">อา</span>
+            <span>จ</span>
+            <span>อ</span>
+            <span>พ</span>
+            <span>พฤ</span>
+            <span>ศ</span>
+            <span class="text-sky-400">ส</span>
+          </div>
+          <div class="grid grid-cols-7 gap-1">
+      `;
+
+      for (let i = 0; i < startDow; i++) {
+        html += `<div class="h-8"></div>`;
+      }
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const iso = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        const ddmmyyyy = `${String(d).padStart(2, '0')}/${String(month + 1).padStart(2, '0')}/${year}`;
+        const isStart = iso === effStart;
+        const isEnd = iso === effEnd;
+        const inRange = effStart && effEnd && iso >= effStart && iso <= effEnd;
+        const isHol = THAI_HOLIDAYS.has(ddmmyyyy);
+
+        let btnClass = 'h-8 rounded-lg text-xs font-semibold flex items-center justify-center relative transition-all cursor-pointer ';
+        if (isStart || isEnd) {
+          btnClass += 'bg-gradient-to-br from-orange-500 to-amber-500 text-slate-950 font-extrabold shadow-md shadow-orange-500/30 ring-2 ring-orange-300 ';
+        } else if (inRange) {
+          btnClass += 'bg-orange-500/20 text-orange-200 border border-orange-500/30 ';
+        } else {
+          btnClass += 'bg-slate-950/60 hover:bg-slate-800 text-slate-200 ';
+        }
+
+        html += `
+          <button type="button"
+            onclick="handleCalDayClick('${iso}')"
+            onmouseenter="handleCalDayHover('${iso}')"
+            class="${btnClass}"
+            title="${ddmmyyyy}${isHol ? ' (วันหยุดนักขัตฤกษ์)' : ''}">
+            <span>${d}</span>
+            ${isHol ? `<span class="w-1.5 h-1.5 rounded-full bg-[#ff9900] absolute top-1 right-1"></span>` : ''}
+          </button>
+        `;
+      }
+
+      html += `</div></div>`;
+      return html;
+    }
+
+    function renderDualCalendar() {
+      const container = document.getElementById('dualCalendarGrid');
+      if (!container) return;
+      const nextDt = new Date(calViewYear, calViewMonth + 1, 1);
+      container.innerHTML =
+        buildSingleMonthHTML(calViewYear, calViewMonth) +
+        buildSingleMonthHTML(nextDt.getFullYear(), nextDt.getMonth());
+
+      const inst = document.getElementById('calInstructionBadge');
+      if (inst) {
+        inst.textContent = calSelectingStep === 1
+          ? '👉 จิ้มเลือก "วันสิ้นสุด" บนปฏิทินได้เลย'
+          : '👆 จิ้มเลือก "วันเริ่มต้น" และ "วันสิ้นสุด" บนปฏิทิน';
+      }
+    }
+
     function selectRangeDayFilter(mode) {
       rangeDayFilter = mode;
       const modes = ['all', 'weekends_holidays', 'fri_to_sun'];
@@ -1604,56 +1794,51 @@
         const btn = document.getElementById(`rangeFilterBtn-${m}`);
         if (!btn) return;
         if (m === mode) {
-          btn.className = 'px-3 py-2.5 rounded-xl border text-xs font-bold flex flex-col items-center gap-0.5 transition-all bg-orange-500/20 border-orange-400 text-orange-200 shadow-sm';
+          btn.className = 'px-3 py-2 rounded-xl border text-xs font-bold flex flex-col items-center gap-0.5 transition-all bg-orange-500/20 border-orange-400 text-orange-200 shadow-sm';
         } else {
-          btn.className = 'px-3 py-2.5 rounded-xl border text-xs font-semibold flex flex-col items-center gap-0.5 transition-all bg-slate-950/60 border-slate-800 text-slate-400 hover:bg-slate-800/80 hover:text-slate-200';
+          btn.className = 'px-3 py-2 rounded-xl border text-xs font-semibold flex flex-col items-center gap-0.5 transition-all bg-slate-950/60 border-slate-800 text-slate-400 hover:bg-slate-800/80 hover:text-slate-200';
         }
       });
       updateSetupRangePreview();
     }
 
     function updateSetupRangePreview() {
-      const startISO = document.getElementById('setupStartDateInput').value;
-      const endISO = document.getElementById('setupEndDateInput').value;
-      const startObj = parseISOToLocalDate(startISO);
-      const endObj = parseISOToLocalDate(endISO);
-
-      const startDisp = document.getElementById('setupStartDisplay');
-      const endDisp = document.getElementById('setupEndDisplay');
+      const startDisp = document.getElementById('calStartBadge');
+      const endDisp = document.getElementById('calEndBadge');
       const summaryEl = document.getElementById('setupRangeSummaryText');
       const badgeEl = document.getElementById('setupRangeCountBadge');
       const errEl = document.getElementById('setupRangeError');
 
-      startDisp.textContent = startObj ? formatDDMMYYYY(startObj) : '';
-      endDisp.textContent = endObj ? formatDDMMYYYY(endObj) : '';
+      const sText = isoToDDMMYYYY(calRangeStartISO);
+      const eText = isoToDDMMYYYY(calRangeEndISO);
+      if (startDisp) startDisp.textContent = sText;
+      if (endDisp) endDisp.textContent = eText;
 
-      if (!startObj || !endObj) return;
-      if (startObj > endObj) {
-        errEl.textContent = 'วันเริ่มต้นต้องมาก่อนหรือวันเดียวกับวันสิ้นสุดครับ';
-        errEl.classList.remove('hidden');
-        badgeEl.textContent = '0 วัน';
-        return;
-      }
-      errEl.classList.add('hidden');
-
-      const previewDates = generateDatesInRange(startISO, endISO, rangeDayFilter);
-      summaryEl.textContent = `ช่วงวันที่: ${formatDDMMYYYY(startObj)} - ${formatDDMMYYYY(endObj)}`;
-      badgeEl.textContent = `${previewDates.length} วัน`;
+      const previewDates = generateDatesInRange(calRangeStartISO, calRangeEndISO, rangeDayFilter);
+      if (summaryEl) summaryEl.textContent = `ช่วงวันที่เลือก: ${sText} - ${eText}`;
+      if (badgeEl) badgeEl.textContent = `${previewDates.length} วัน`;
+      if (errEl) errEl.classList.add('hidden');
     }
 
     function openSetupRangeModal(isFirstVisit = false) {
       const modal = document.getElementById('setupRangeModal');
       document.getElementById('setupModalHeaderTitle').textContent = isFirstVisit
-        ? 'ยินดีต้อนรับ! กำหนดช่วงวันทริปของคุณ'
-        : 'กำหนดช่วงวันที่ (Date Range)';
+        ? 'ยินดีต้อนรับ! จิ้มเลือกช่วงวันทริปของคุณ'
+        : 'เลือกช่วงวันที่จากปฏิทิน (Date Range)';
       document.getElementById('setupTripTitleInput').value = state.title || 'เช็ควันเที่ยวกับเพื่อน 2026';
 
       const firstISO = state.dates.length > 0 ? ddmmyyyyToISO(state.dates[0].id) : '2026-10-23';
       const lastISO = state.dates.length > 0 ? ddmmyyyyToISO(state.dates[state.dates.length - 1].id) : '2026-12-27';
 
-      document.getElementById('setupStartDateInput').value = firstISO || '2026-10-23';
-      document.getElementById('setupEndDateInput').value = lastISO || '2026-12-27';
+      calRangeStartISO = firstISO || '2026-10-23';
+      calRangeEndISO = lastISO || '2026-12-27';
+      const startDt = parseISOToLocalDate(calRangeStartISO) || new Date(2026, 9, 1);
+      calViewYear = startDt.getFullYear();
+      calViewMonth = startDt.getMonth();
+      calSelectingStep = 0;
+      calHoverISO = null;
 
+      renderDualCalendar();
       selectRangeDayFilter(rangeDayFilter);
       modal.classList.remove('hidden');
       modal.classList.add('flex');
@@ -1669,13 +1854,11 @@
     function submitSetupRangeModal(e) {
       e.preventDefault();
       const titleVal = document.getElementById('setupTripTitleInput').value.trim();
-      const startISO = document.getElementById('setupStartDateInput').value;
-      const endISO = document.getElementById('setupEndDateInput').value;
       const errEl = document.getElementById('setupRangeError');
 
-      const generated = generateDatesInRange(startISO, endISO, rangeDayFilter);
+      const generated = generateDatesInRange(calRangeStartISO, calRangeEndISO, rangeDayFilter);
       if (generated.length === 0) {
-        errEl.textContent = 'ไม่พบวันที่ในช่วงที่เลือก กรุณาตรวจสอบช่วงวันที่อีกครั้งครับ';
+        errEl.textContent = 'ไม่พบวันที่ในช่วงที่เลือก กรุณาคลิกเลือกช่วงวันที่บนปฏิทินอีกครั้งครับ';
         errEl.classList.remove('hidden');
         return;
       }
@@ -1683,7 +1866,6 @@
       if (titleVal) state.title = titleVal;
       state.dates = generated;
 
-      // Preserve existing friends' availability for matching dates, initialize new dates to 'empty'
       state.friends.forEach(f => {
         if (!state.availability[f]) state.availability[f] = {};
         generated.forEach(d => {
